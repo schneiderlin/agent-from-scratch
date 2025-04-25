@@ -67,3 +67,6 @@ projects/**/pom.xml
 # generated
 **/.shadow-cljs
 **/js/cljs-runtime
+
+# secrets
+**/config.secrets.edn

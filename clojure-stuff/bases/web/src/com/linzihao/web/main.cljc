@@ -7,4 +7,4 @@
    (binding [dom/node js/document.body
              e/http-request (e/server ring-request)]
      (dom/div (dom/props {:style {:display "contents"}})
-              (dom/h1 (dom/text "hello world"))))))
+              (dom/h1 (dom/text "hello world!"))))))
