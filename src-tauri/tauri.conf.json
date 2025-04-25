@@ -12,7 +12,8 @@
       {
         "title": "agent-from-scratch",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "url": "http://localhost:8081"
       }
     ],
     "security": {
