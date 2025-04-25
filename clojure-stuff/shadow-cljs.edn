@@ -1,0 +1,15 @@
+{:source-paths
+ []
+
+ :dependencies []
+
+ :js-options {:js-package-dirs ["node_modules" "."]}
+
+ :builds
+ {:web {:target :browser
+        :devtools {:loader-mode :default
+                   :watch-dir "bases/web/resources/public/web"}
+        :output-dir "bases/web/resources/public/web/js"
+        :asset-path "/js"
+        :modules {:main {:entries [com.linzihao.web.dev] :init-fn com.linzihao.web.dev/start!}}
+        :build-hooks [(hyperfiddle.electric.shadow-cljs.hooks3/reload-clj)]}}}
