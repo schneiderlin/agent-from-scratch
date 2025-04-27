@@ -34,6 +34,16 @@
                    :longitude {:type "number"}}
       :required ["latitude" "longitude"]
       :additionalProperties false}
+     :strict true}}
+   {:type "function"
+    :function
+    {:name "add_memory"
+     :description "when user tell you something factual or explicit ask you to remember something, use this function. the memory text should be concise."
+     :parameters
+     {:type "object"
+      :properties {:memory_text {:type "string"}}
+      :required ["memory_text"]
+      :additionalProperties false}
      :strict true}}])
 
 (def akash-client {:base-url "https://chatapi.akash.network/api/v1"
@@ -46,15 +56,18 @@
 
 (defn stream-chat [{:keys [base-url api-key model] :as _client} messages]
   (m/ap
-   (let [response (m/? (m/via m/blk (http/post (str base-url "/chat/completions")
-                                               {:form-params {:model model
-                                                              :tools tools
-                                                              :stream true
-                                                              :messages messages}
-                                                :headers {"Authorization" (str "Bearer " api-key)}
-                                                :content-type :json
-                                                :accept :json
-                                                :as :stream})))
+   (let [response (m/? (m/via m/blk (try
+                                      (http/post (str base-url "/chat/completions")
+                                                 {:form-params {:model model
+                                                                :tools tools
+                                                                :stream true
+                                                                :messages messages}
+                                                  :headers {"Authorization" (str "Bearer " api-key)}
+                                                  :content-type :json
+                                                  :accept :json
+                                                  :as :stream})
+                                      (catch Exception e
+                                        (println e)))))
          event-stream ^InputStream (:body response)]
      (loop [accum ""]
        (let [byte-array (byte-array 4096)
@@ -148,7 +161,8 @@
       tool-calls-ret
       content-ret)))
 
-(comment 
+(comment
+  ;; 普通 function call
   (time
    (debug-streaming-response
     (openai-chat deepseek-client [{:role "user" :content "how's the weather in guangzhou?"}
@@ -162,9 +176,16 @@
                                    :content "24C"}])
     :chunk->content identity))
 
+  ;; 普通chat
   (time
    (debug-streaming-response
     (openai-chat deepseek-client [{:role "user" :content "hello"}])
+    :chunk->content identity))
+
+  ;; 记忆
+  (time
+   (debug-streaming-response
+    (openai-chat deepseek-client [{:role "user" :content "hello, my name is linzihao"}])
     :chunk->content identity))
   :rcf)
 
