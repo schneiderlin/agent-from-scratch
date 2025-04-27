@@ -151,7 +151,15 @@
 (comment 
   (time
    (debug-streaming-response
-    (openai-chat deepseek-client [{:role "user" :content "how's the weather in guangzhou?"}])
+    (openai-chat deepseek-client [{:role "user" :content "how's the weather in guangzhou?"}
+                                  {:role "assistant" :content ""
+                                   :tool_calls [{:index 0,
+                                                 :id "call_0_5fc90e69-57c3-4a68-8a23-41f2ab0cf4ff",
+                                                 :type "function",
+                                                 :function {:name "get_weather", :arguments "{\"latitude\":23.1291,\"longitude\":113.2644}"}}]}
+                                  {:role "tool"
+                                   :tool_call_id "call_0_5fc90e69-57c3-4a68-8a23-41f2ab0cf4ff"
+                                   :content "24C"}])
     :chunk->content identity))
 
   (time

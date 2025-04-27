@@ -10,10 +10,18 @@ config = {
     **os.environ,
 }
 
-client = OpenAI(
-  base_url="https://openrouter.ai/api/v1",
-  api_key=config["openrouter-apikey"],
-)
+# client = OpenAI(
+#   base_url="https://openrouter.ai/api/v1",
+#   api_key=config["openrouter-apikey"],
+# )
+
+load_dotenv()
+
+config = {
+    **dotenv_values(".env.shared"),
+    **dotenv_values(".env.secret"),
+    **os.environ,
+}
 
 tools = [
     {
