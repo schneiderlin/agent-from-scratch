@@ -2,7 +2,8 @@
 
                   :extra-deps {org.clojure/clojure {:mvn/version "1.12.0"}
                                poly/web {:local/root "bases/web"}
-                               poly/electric-main {:local/root "components/electric-main"}}}
+                               poly/electric-main {:local/root "components/electric-main"}
+                               poly/openai-client {:local/root "components/openai-client"}}}
 
             :test {:extra-paths []}
 

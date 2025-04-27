@@ -5,28 +5,53 @@
    [cheshire.core :as json]
    [clojure.string :as str]
    [clojure.java.io :as io]
+   [com.rpl.specter :as sp]
    [aero.core :refer [read-config]])
   (:import [java.io InputStream]))
 
 (def config 
   (read-config (io/resource "openai-client/config.edn")))
 
-(def token (get-in config [:secrets :akash-apikey]))
-
 (def DEFAULT_MODEL "DeepSeek-R1")
 
-(defn- parse-event [raw-event]
+(defn- parse-event [raw-event] 
   (if (= raw-event "[DONE]")
     {:status :done}
     (json/decode raw-event true)))
 
-(defn stream-chat [model messages]
+(comment
+  (parse-event "{\"id\":\"e74deba9-0520-4f45-805d-61b3aefe63c8\",\"object\":\"chat.completion.chunk\",\"created\":1745735232,\"model\":\"deepseek-chat\",\"system_fingerprint\":\"fp_8802369eaa_prod0425fp8\",\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"4\"}}]},\"logprobs\":null,\"finish_reason\":null}]}")
+  :rcf)
+
+(def tools
+  [{:type "function"
+    :function
+    {:name "get_weather"
+     :description "Get current temperature for provided coordinates in celsius."
+     :parameters
+     {:type "object"
+      :properties {:latitude {:type "number"}
+                   :longitude {:type "number"}}
+      :required ["latitude" "longitude"]
+      :additionalProperties false}
+     :strict true}}])
+
+(def akash-client {:base-url "https://chatapi.akash.network/api/v1"
+                   :api-key (get-in config [:secrets :akash-apikey])
+                   :model DEFAULT_MODEL})
+
+(def deepseek-client {:base-url "https://api.deepseek.com"
+                      :api-key (get-in config [:secrets :deepseek-apikey])
+                      :model "deepseek-chat"})
+
+(defn stream-chat [{:keys [base-url api-key model] :as _client} messages]
   (m/ap
-   (let [response (m/? (m/via m/blk (http/post "https://chatapi.akash.network/api/v1/chat/completions"
+   (let [response (m/? (m/via m/blk (http/post (str base-url "/chat/completions")
                                                {:form-params {:model model
+                                                              :tools tools
                                                               :stream true
                                                               :messages messages}
-                                                :headers {"Authorization" (str "Bearer " token)}
+                                                :headers {"Authorization" (str "Bearer " api-key)}
                                                 :content-type :json
                                                 :accept :json
                                                 :as :stream})))
@@ -55,32 +80,83 @@
   (fn [x]
     (let [choices (:choices x)
           choice (first choices)
-          content (-> choice :delta :content)]
-      content)))
+          content (-> choice :delta :content)
+          tool-calls (-> choice :delta :tool_calls)]
+      (if content
+        {:content content}
+        {:tool-calls tool-calls}))))
 
 (defn openai-chat
-  [model messages]
-  (let [flow (stream-chat model messages)]
+  [client messages]
+  (let [flow (stream-chat client messages)]
     (m/eduction (map openai-chunk->response) flow)))
+
+(defn combine-tool-call [acc chunk]
+  (let [chunk (first chunk)]
+    (if-let [args (get-in chunk [:function :arguments])]
+      (sp/transform [:function :arguments]
+                    #(str (or % "") args)
+                    acc)
+      (merge acc chunk))))
+
+(comment
+  (def tool-calls-chunks [[{:index 0, :id "call_0_29cff275-a3c7-4d18-808f-68af17e74114", :type "function", :function {:name "get_weather", :arguments ""}}]
+                          [{:index 0, :function {:arguments "{\""}}]
+                          [{:index 0, :function {:arguments "latitude"}}]
+                          [{:index 0, :function {:arguments "\":"}}]
+                          [{:index 0, :function {:arguments "23"}}]
+                          [{:index 0, :function {:arguments "."}}]
+                          [{:index 0, :function {:arguments "129"}}]
+                          [{:index 0, :function {:arguments "1"}}]
+                          [{:index 0, :function {:arguments ",\""}}]
+                          [{:index 0, :function {:arguments "long"}}]
+                          [{:index 0, :function {:arguments "itude"}}]
+                          [{:index 0, :function {:arguments "\":"}}]
+                          [{:index 0, :function {:arguments "113"}}]
+                          [{:index 0, :function {:arguments "."}}]
+                          [{:index 0, :function {:arguments "264"}}]
+                          [{:index 0, :function {:arguments "4"}}]
+                          [{:index 0, :function {:arguments "}"}}]])
+
+  (reduce
+   combine-tool-call
+   (first (first tool-calls-chunks))
+   (rest tool-calls-chunks))
+  :rcf)
 
 (defn debug-streaming-response
   "输入一个 missionary flow, 实时打印每个 token 的内容. 最后返回完整的 response string."
   [flow> & {:keys [chunk->content]
             :or {chunk->content (fn [x] (:content (:message x)))}}]
   (let [sb (StringBuilder.)
-        main (m/reduce (fn [_ x]
-                         (let [content (chunk->content x)]
-                           (.append sb content)
-                           (print content)
-                           (flush)))
-                       nil flow>)]
-    (m/? main)
-    (.toString sb)))
+        main (m/reduce
+              (fn [tool-calls x] 
+                (if-let [content (:content x)]
+                  (let [content (chunk->content content)]
+                    (.append sb content)
+                    (print content)
+                    (flush)
+                    tool-calls)
+                  (let [chunk (:tool-calls x)] 
+                    (if (not (nil? tool-calls))
+                      (combine-tool-call tool-calls chunk)
+                      (first chunk)))))
+              nil flow>)
+        tool-calls-ret (m/? main) 
+        content-ret (.toString sb)]
+    (if (empty? content-ret)
+      tool-calls-ret
+      content-ret)))
 
 (comment 
   (time
    (debug-streaming-response
-    (openai-chat DEFAULT_MODEL [{:role "user" :content "Hello"}])
+    (openai-chat deepseek-client [{:role "user" :content "how's the weather in guangzhou?"}])
+    :chunk->content identity))
+
+  (time
+   (debug-streaming-response
+    (openai-chat deepseek-client [{:role "user" :content "hello"}])
     :chunk->content identity))
   :rcf)
 

@@ -1,5 +1,5 @@
-(ns com.linzihao.electric-main.interface
-  (:require [com.linzihao.electric-main.server-jetty :as jetty]))
+(ns com.linzihao.openai-client.interface
+  (:require [com.linzihao.openai-client.server-jetty :as jetty]))
 
 (defn start-server! [entrypoint
                      {:keys [port host]
