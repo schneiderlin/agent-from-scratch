@@ -75,3 +75,5 @@ projects/**/pom.xml
 # secrets
 **/config.secrets.edn
 **/.env.secret
+
+**/mydb

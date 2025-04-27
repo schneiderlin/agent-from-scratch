@@ -48,13 +48,15 @@
 
 (def akash-client {:base-url "https://chatapi.akash.network/api/v1"
                    :api-key (get-in config [:secrets :akash-apikey])
-                   :model DEFAULT_MODEL})
+                   :model DEFAULT_MODEL
+                   :tools tools})
 
 (def deepseek-client {:base-url "https://api.deepseek.com"
                       :api-key (get-in config [:secrets :deepseek-apikey])
-                      :model "deepseek-chat"})
+                      :model "deepseek-chat"
+                      :tools tools})
 
-(defn stream-chat [{:keys [base-url api-key model] :as _client} messages]
+(defn stream-chat [{:keys [base-url api-key model tools] :as _client} messages]
   (m/ap
    (let [response (m/? (m/via m/blk (try
                                       (http/post (str base-url "/chat/completions")
