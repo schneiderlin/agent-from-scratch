@@ -24,8 +24,7 @@
         qry (edn/read-string (get json-args "qry"))
         args (edn/read-string (get json-args "args"))
         limit (or (get json-args "limit") 10)]
-    qry
-    #_(datalevin-tools/q qry args))
+    (datalevin-tools/q qry args))
 
   (time
    (core/debug-streaming-response

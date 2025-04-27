@@ -25,10 +25,8 @@
      (d/db conn)
      "fred")
 
-(defmacro q [qry args]
-  `(d/q ~qry
-        (d/db conn)
-        ~@args))
+(defn q [qry args]
+  (apply d/q qry (d/db conn) args))
 
 (comment
   (q (edn/read-string
