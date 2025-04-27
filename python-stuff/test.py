@@ -1,13 +1,18 @@
 from openai import OpenAI
+from dotenv import load_dotenv, dotenv_values
+import os
 
-# client = OpenAI(
-#     base_url="https://chatapi.akash.network/api/v1",
-#     api_key="sk-k7I8ftI2plZUARxUnD2GyA",
-# )
+load_dotenv()
+
+config = {
+    **dotenv_values(".env.shared"),
+    **dotenv_values(".env.secret"),
+    **os.environ,
+}
 
 client = OpenAI(
   base_url="https://openrouter.ai/api/v1",
-  api_key="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",
+  api_key=config["openrouter-apikey"],
 )
 
 tools = [
@@ -38,4 +43,17 @@ response = client.chat.completions.create(
     ]
 )
 
-print(response)
+tool_calls = response.choices[0].message.tool_calls
+
+for tool_call in tool_calls:
+    print(tool_call.function.name)
+    print(tool_call.function.arguments)
+
+response1 = client.chat.completions.create(
+    model="deepseek/deepseek-chat-v3-0324",
+    tools=tools,
+    messages=[
+        {"role": "user", "content": "How's the weather in guangzhou?"},
+        {"role": "tool", "content": "23 degree c, raining", "tool_call_id": tool_calls[0].id}
+    ]
+)
