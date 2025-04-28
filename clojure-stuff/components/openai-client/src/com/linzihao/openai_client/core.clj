@@ -6,6 +6,7 @@
    [clojure.string :as str]
    [clojure.java.io :as io]
    [com.rpl.specter :as sp]
+   [clojure.pprint :as pprint]
    [aero.core :refer [read-config]])
   (:import [java.io InputStream]))
 
@@ -139,20 +140,19 @@
    (rest tool-calls-chunks))
   :rcf)
 
-(defn debug-streaming-response
+(defn reduce-streaming-response
   "输入一个 missionary flow, 实时打印每个 token 的内容. 最后返回完整的 response string."
-  [flow> & {:keys [chunk->content]
-            :or {chunk->content (fn [x] (:content (:message x)))}}]
+  [flow> & _opts]
   (let [sb (StringBuilder.)
         main (m/reduce
-              (fn [tool-calls x] 
+              (fn [tool-calls x]
                 (if-let [content (:content x)]
-                  (let [content (chunk->content content)]
+                  (do
                     (.append sb content)
                     (print content)
                     (flush)
                     tool-calls)
-                  (let [chunk (:tool-calls x)] 
+                  (let [chunk (:tool-calls x)]
                     (if (not (nil? tool-calls))
                       (combine-tool-call tool-calls chunk)
                       (first chunk)))))
@@ -163,10 +163,20 @@
       tool-calls-ret
       content-ret)))
 
+(defn tool-calls->msg [tool-call]
+  {:role "assistant"
+   :content ""
+   :tool_calls [tool-call]})
+
+(defn result->tool-resp [result tool-call-id]
+  {:role "tool"
+   :tool_call_id tool-call-id
+   :content (with-out-str (pprint/pprint result))})
+
 (comment
   ;; 普通 function call
   (time
-   (debug-streaming-response
+   (reduce-streaming-response
     (openai-chat deepseek-client [{:role "user" :content "how's the weather in guangzhou?"}
                                   {:role "assistant" :content ""
                                    :tool_calls [{:index 0,
@@ -180,13 +190,13 @@
 
   ;; 普通chat
   (time
-   (debug-streaming-response
+   (reduce-streaming-response
     (openai-chat deepseek-client [{:role "user" :content "hello"}])
     :chunk->content identity))
 
   ;; 记忆
   (time
-   (debug-streaming-response
+   (reduce-streaming-response
     (openai-chat deepseek-client [{:role "user" :content "hello, my name is linzihao"}])
     :chunk->content identity))
   :rcf)

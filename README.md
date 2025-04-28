@@ -13,8 +13,15 @@ jack in clojure-stuff 目录的 deps.edn.
 
 # TODO
 - chat interface (repl)
+- tool call 执行 clojure function
 - 可以读写文件
+    - clojure function 搜索文件
 - 通过 @ 添加 context
 - UI?
 - 整理图片?
 - 视频翻译?
+
+# design
+
+## LLM 返回 tool call 的时候, 怎么执行?
+有一个 map, 是 function name -> function
