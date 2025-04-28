@@ -12,16 +12,8 @@ jack in clojure-stuff 目录的 deps.edn.
 在 wsl 下 electric 的登录回调可能会失败, 复制浏览器上的回调地址, 在 wsl 的 terminal 手动 curl 地址可以解决
 
 # TODO
-- chat interface (repl)
-- tool call 执行 clojure function
-- 可以读写文件
-    - clojure function 搜索文件
 - 通过 @ 添加 context
+- 自动提供 context?
 - UI?
 - 整理图片?
 - 视频翻译?
-
-# design
-
-## LLM 返回 tool call 的时候, 怎么执行?
-有一个 map, 是 function name -> function

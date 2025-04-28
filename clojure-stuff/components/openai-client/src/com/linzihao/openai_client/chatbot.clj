@@ -68,6 +68,6 @@ IMPORTANT: ALWAYS pay attention to memories, as they provide valuable context to
   
   (def !history (atom [{:role "system" :content system-prompt}]))
 
-  (chatbot !history client "remember my interest is in making personal knowledge management system and learning foreign languages. i am learning German and Indonesian right now.") 
+  (chatbot !history client "") 
   :rcf)
 
