@@ -1,28 +1,23 @@
 (ns com.linzihao.openai-client.chatbot
   (:require
    [cheshire.core :as json]
-   [com.linzihao.openai-client.core :as core]))
+   [com.linzihao.openai-client.core :as core]
+   [com.linzihao.local-file.interface :as file-mem]))
 
-(defn get-weather [{:keys [latitude longitude]}]
-  (str latitude "," longitude ": " 23 " degrees"))
+(def client
+  (-> core/deepseek-client
+      (assoc :tools file-mem/tools)
+      (assoc :tool->f file-mem/tool->f)))
 
-(defn add-memory [{:keys [memory_text]}]
-  (str "added memory: " memory_text))
-
-(def tool->f
-  {"get_weather" get-weather
-   "add_memory" add-memory})
-
-(def client (assoc core/deepseek-client :tools core/tools))
-
-(defn tool-call->result [{:keys [function]}]
+(defn tool-call->result [client {:keys [function]}]
   (let [{:keys [name arguments]} function
         args (json/decode arguments true)
-        f (get tool->f name)]
+        f (get (:tool->f client) name)]
     (f args)))
 
 (comment
   (tool-call->result 
+   {:tool->f {"get_weather" (constantly 42)}}
    {:function {:name "get_weather" 
                :arguments "{\"latitude\":23.1291,\"longitude\":113.2644}"}})
   :rcf)
@@ -47,7 +42,7 @@
              _ (println "tool call:" tool-call)
              rep-msg (core/tool-calls->msg tool-call)
              res-msg (core/result->tool-resp
-                      (tool-call->result tool-call)
+                      (tool-call->result client tool-call)
                       (:id tool-call))]
          (swap! !history-atom conj rep-msg res-msg)
          (chatbot !history-atom client))))))
@@ -55,5 +50,24 @@
 (comment
   (def !history (atom []))
   (chatbot !history client "how's the weather in guangzhou")
+  :rcf)
+
+;; memory system test
+(comment
+  (def system-prompt "You are FiFi, a powerful agentic AI assistant designed by linzihao.
+IMPORTANT: If you state that you will use a tool, immediately call that tool as your next action.
+Before calling each tool, first explain why you are calling it.
+<memory_system> You have access to a persistent memory database to record important context about the USER's task, 
+codebase, requests, and preferences for future reference. As soon as you encounter important information or context, proactively use the add-note or update-note tool to save it to the database. You DO NOT need to wait until the end of a task to create a memory or a break in the conversation to create a memory. 
+You DO NOT need to be conservative about creating memories. Any memories you create will be presented to the USER, who can reject them if they are not aligned with their preferences. 
+Remember that you have a limited context window and ALL CONVERSATION CONTEXT, will be deleted. 
+Therefore, you should create memories liberally to preserve key context. To retrieve information: You must actively search for relevant memories using:
+search-note (to find notes by keyword) → Returns a list of filenames.
+read-note (to read a specific note's content).
+IMPORTANT: ALWAYS pay attention to memories, as they provide valuable context to guide your behavior and solve the task. </memory_system>")
+  
+  (def !history (atom [{:role "system" :content system-prompt}]))
+
+  (chatbot !history client "remember my interest is in making personal knowledge management system and learning foreign languages. i am learning German and Indonesian right now.") 
   :rcf)
 

@@ -49,4 +49,40 @@
   (find-matching-files data-path "inner")
   :rcf)
 
+(defn search-note [{:keys [keyword]}]
+  (mapv fs/file-name (find-matching-files data-path keyword)))
+
+(comment
+  (search-note {:keyword "clojure"})
+  :rcf)
+
+(defn read-file [file-path]
+  (slurp file-path))
+
+(defn read-note [{:keys [filename]}]
+  (read-file (str data-path "/" filename)))
+
+(comment
+  (read-note {:filename "clojure"})
+  :rcf)
+
+(defn add-file [file-path content]
+  (spit file-path content))
+
+(defn add-note [{:keys [filename content]}]
+  (add-file (str data-path "/" filename) content))
+
+(comment
+  (add-note {:filename "clojure" :content "clojure"})
+  :rcf)
+
+(defn update-file [file-path new-content]
+  (spit file-path new-content))
+
+(defn update-note [{:keys [filename new-content]}]
+  (update-file (str data-path "/" filename) new-content))
+
+(comment
+  (update-note {:filename "clojure" :new-content "clojure!"})
+  :rcf)
 

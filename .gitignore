@@ -77,3 +77,6 @@ projects/**/pom.xml
 **/.env.secret
 
 **/mydb
+
+# data
+data
