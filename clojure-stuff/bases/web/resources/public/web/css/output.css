@@ -12,6 +12,7 @@
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-neutral-100: oklch(97% 0 0);
     --color-neutral-800: oklch(26.9% 0 0);
+    --color-white: #fff;
     --spacing: 0.25rem;
     --text-5xl: 3rem;
     --text-5xl--line-height: 1;
@@ -228,6 +229,9 @@
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-green-500) 20%, transparent);
     }
+  }
+  .bg-white {
+    background-color: var(--color-white);
   }
   .bg-\[url\(\'\/image\/Xiangqi_board\.svg\'\)\] {
     background-image: url('/image/Xiangqi_board.svg');

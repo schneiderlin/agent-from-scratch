@@ -18,11 +18,11 @@
      {:class (str "w-24 h-24 flex items-center justify-center rounded-full border-8 select-none "
                   (if selected? "border-primary" "border-base-300")
                   " " (if (= "红" (subs (name piece) 0 1))
-                        "text-red-600 bg-base-100"
-                        "text-neutral-800 bg-base-100")
+                        "text-red-600 bg-white"
+                        "text-neutral-800 bg-white")
                   (if (= (subs (name piece) 0 1) next-player)
                     " cursor-pointer hover:bg-neutral-100"
-                    " opacity-50 cursor-not-allowed")
+                    " cursor-not-allowed")
                   " transition-colors")})
     (when (= (subs (name piece) 0 1) next-player)
       (e/for [[_token _event] (dom/On-all "click")]
