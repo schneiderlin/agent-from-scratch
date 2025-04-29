@@ -19,7 +19,7 @@ jack in clojure-stuff 目录的 deps.edn.
 - 视频翻译?
 - 象棋AI
     - UI 里面 highlight bestmove
-        - UI
         - 用 engine 计算 bestmove
+    - electric 管理 life cycle, 当 chessboard 删除的时候停止 engine
 - browser use
 - computer use

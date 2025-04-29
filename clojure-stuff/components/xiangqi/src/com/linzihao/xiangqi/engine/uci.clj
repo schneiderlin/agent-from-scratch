@@ -41,7 +41,9 @@
        (if (nil? line)
          (do (println "Engine stdout stream closed.")
              (m/amb))
-         (m/amb line (recur)))))))
+         (do
+           (println "engine: " line)
+           (m/amb line (recur))))))))
 
 (defn engine->bestmove-flow [engine]
   (let [pattern #"^bestmove (\w+)"]
@@ -73,16 +75,20 @@
     cancel))
 
 (comment
+  ;; 公司
   (def engine
     (start-engine "/home/zihao/workspace/private/agent-from-scratch/data/pikafish/pikafish-avx2"))
-
-  (def !bestmove (atom nil))
-  (def cancel-watch (watch-bestmove !bestmove engine))
-
-  @!bestmove
   
+  (def engine
+    (start-engine "/home/linzihao/Desktop/workspace/private/agent-from-scratch/data/pikafish/pikafish-avx2")) 
+  
+  (def flow (engine->bestmove-flow engine))
   (send-command engine "isready")
   (send-command engine "position fen 9/9/3k5/9/9/9/4R4/3A5/8r/4K4 b - - 0 1")
   (send-command engine "go")
+  (send-command engine "stop")
 
+  (def !bestmove (atom nil))
+  (watch-bestmove !bestmove engine) 
+  
   :rcf)

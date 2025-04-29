@@ -30,25 +30,27 @@
   {\a 0 \b 1 \c 2 \d 3 \e 4 \f 5 \g 6 \h 7 \i 8})
 
 (defn move-str->coords [move-str]
-  (let [[from to] [(subs move-str 0 2) (subs move-str 2 4)]
-        [from-file from-rank] (seq from)
-        [to-file to-rank] (seq to)
-        rank->row #(case %
-                     \0 9
-                     \1 8
-                     \2 7
-                     \3 6
-                     \4 5
-                     \5 4
-                     \6 3
-                     \7 2
-                     \8 1
-                     \9 0)]
-    [[(rank->row from-rank) (file->col from-file)]
-     [(rank->row to-rank) (file->col to-file)]]))
+  (if (nil? move-str)
+    nil
+    (let [[from to] [(subs move-str 0 2) (subs move-str 2 4)]
+          [from-file from-rank] (seq from)
+          [to-file to-rank] (seq to)
+          rank->row #(case %
+                       \0 9
+                       \1 8
+                       \2 7
+                       \3 6
+                       \4 5
+                       \5 4
+                       \6 3
+                       \7 2
+                       \8 1
+                       \9 0)]
+      [[(rank->row from-rank) (file->col from-file)]
+       [(rank->row to-rank) (file->col to-file)]])))
 
-(comment
-  (fen->state "9/9/3k5/9/9/9/4R4/3A5/8r/4K4 b - - 0 1")
+(comment 
+  (move-str->coords nil)
   (move-str->coords "i1i0")
   (move-str->coords "e0e1") 
   :rcf)

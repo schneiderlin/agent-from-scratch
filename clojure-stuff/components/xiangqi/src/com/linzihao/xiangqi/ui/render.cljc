@@ -4,15 +4,31 @@
    [hyperfiddle.electric3 :as e]
    [hyperfiddle.electric-dom3 :as dom]
    #?(:clj [com.linzihao.xiangqi.interface :as logic])
+   #?(:clj [com.linzihao.xiangqi.engine.interface :as ei])
    #?(:clj [com.linzihao.xiangqi.fen :as fen])))
 
 (defonce !selected-pos (atom nil))
 #?(:clj (def !debug-pos (atom nil)))
 #?(:clj (defonce !state (atom logic/state)))
-#?(:clj (defonce !bestmove (atom "e0e1")))
-#?(:clj (defonce bestmove-flow (m/watch !bestmove)))
+#?(:clj (defonce engine (ei/start-engine "/home/linzihao/Desktop/workspace/private/agent-from-scratch/data/pikafish/pikafish-avx2")))
+#?(:clj (defonce !bestmove (atom nil)))
+;; #?(:clj (defonce bestmove-flow (m/watch !bestmove)))
+#?(:clj (defonce bestmove-flow (ei/engine->bestmove-flow engine)))
+
 
 (comment 
+  (reset! !bestmove "h2e2")
+  (def bestmove-flow (m/watch !bestmove))
+  (def bestmove-flow (ei/engine->bestmove-flow engine))
+
+  engine
+  (ei/send-command engine "go")
+  (ei/send-command engine "uci")
+  (ei/send-command engine "isready")
+  (ei/send-command engine "d")
+  (ei/send-command engine "stop")
+ 
+
   (reset! !debug-pos [8 4])
   (require '[com.linzihao.xiangqi.fen :refer [fen->state move-str->coords]])
   (reset! !state (fen->state
