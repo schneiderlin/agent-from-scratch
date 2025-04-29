@@ -110,11 +110,6 @@
      :reasoning-content (if (empty? reasoning-content-ret) nil reasoning-content-ret)
      :tool-calls tool-calls-ret}))
 
-(defn tool-calls->msg [tool-call]
-  {:role "assistant"
-   :content ""
-   :tool_calls [tool-call]})
-
 (defn result->tool-resp [result tool-call-id]
   {:role "tool"
    :tool_call_id tool-call-id

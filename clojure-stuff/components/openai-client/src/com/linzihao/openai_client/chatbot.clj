@@ -16,6 +16,7 @@
                :arguments "{\"latitude\":23.1291,\"longitude\":113.2644}"}})
   :rcf)
 
+;; TODO: Qwen 是不需要把 reasoning content 加到 history 里面的
 (defn chatbot
   "prompt can be a string, which is equvelent to {:role \"user\" :content prompt}
    or can be a map with :role and :content key"
