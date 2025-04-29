@@ -24,8 +24,9 @@
                     " cursor-pointer hover:bg-neutral-100"
                     " opacity-50 cursor-not-allowed")
                   " transition-colors")})
-    #_(when (= (subs (name piece) 0 1) next-player)
-      (dom/on "click" (e/fn [_] (reset! !selected-pos [row col]))))
+    (when (= (subs (name piece) 0 1) next-player)
+      (e/for [[_token _event] (dom/On-all "click")]
+        (reset! !selected-pos [row col])))
     (dom/span
      (dom/props {:class "text-5xl font-bold"})
      (dom/text (last (name piece)))))))
@@ -69,12 +70,11 @@
                   (dom/div
                    (dom/props {:class "absolute w-24 h-24 bg-green-500/20 rounded-full"
                                :style {:transform (str "translate(" left "px, " top "px)")}})
-                   #_(dom/on "click"
-                           (e/fn [_]
-                             (when (and selected-pos
-                                        (= (subs (name (get-in board selected-pos)) 0 1) next-player))
-                               (e/server (swap! !state #(logic/move % selected-pos [row col])))
-                               (reset! !selected-pos nil)))))))
+                   (e/for [[_token _event] (dom/On-all "click")]
+                     (when (and selected-pos
+                                (= (subs (name (get-in board selected-pos)) 0 1) next-player))
+                       (e/server (swap! !state #(logic/move % selected-pos [row col])))
+                       (reset! !selected-pos nil))))))
 
       ;; Add debug position highlight
       (when-let [[row col] debug-pos]
