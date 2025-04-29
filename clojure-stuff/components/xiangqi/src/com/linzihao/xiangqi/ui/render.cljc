@@ -3,12 +3,15 @@
             [hyperfiddle.electric-dom3 :as dom]
             #?(:clj [com.linzihao.xiangqi.interface :as logic])))
 
-(def !selected-pos (atom nil))
+(defonce !selected-pos (atom nil))
 #?(:clj (def !debug-pos (atom nil)))
-#?(:clj (def !state (atom logic/state)))
+#?(:clj (defonce !state (atom logic/state)))
 
 (comment
-  (reset! !debug-pos [8 4]) 
+  (reset! !debug-pos [8 4])
+  (require '[com.linzihao.xiangqi.fen :refer [fen->state]])
+  (reset! !state (fen->state
+                  "9/9/3k5/9/9/9/4R4/3A5/8r/4K4 b - - 0 1"))
   :rcf)
 
 (e/defn ChessPiece [{:keys [piece selected? row col next-player]}]
