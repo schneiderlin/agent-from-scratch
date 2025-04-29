@@ -84,7 +84,10 @@
   
   (def flow (engine->bestmove-flow engine))
   (send-command engine "isready")
+  (send-command engine "position startpos")
   (send-command engine "position fen 9/9/3k5/9/9/9/4R4/3A5/8r/4K4 b - - 0 1")
+  (send-command engine "d")
+  (send-command engine "moves h2e2")
   (send-command engine "go")
   (send-command engine "stop")
 

@@ -20,9 +20,10 @@
   (reset! !bestmove "h2e2")
   (def bestmove-flow (m/watch !bestmove))
   (def bestmove-flow (ei/engine->bestmove-flow engine))
+  (def engine (ei/start-engine "/home/linzihao/Desktop/workspace/private/agent-from-scratch/data/pikafish/pikafish-avx2"))
 
   engine
-  (ei/send-command engine "go")
+  (ei/send-command engine "go depth 10")
   (ei/send-command engine "uci")
   (ei/send-command engine "isready")
   (ei/send-command engine "d")
@@ -58,17 +59,26 @@
      (dom/props {:class "text-5xl font-bold"})
      (dom/text (last (name piece)))))))
 
+(e/defn Go [state]
+  (e/server
+   (let [new-fen (fen/state->fen state)]
+     (println "start thinking in new pos")
+     (ei/send-command engine (str "position fen " new-fen))
+     (ei/send-command engine "go depth 10")
+     nil)))
+
 (e/defn Chessboard []
   (e/client
    (let [state (e/server (e/watch !state))
          board (e/server (e/watch (atom (:board state))))
-         bestmove (e/server (fen/move-str->coords (e/input bestmove-flow))) 
+         bestmove (e/server (fen/move-str->coords (e/input bestmove-flow)))
          selected-pos (e/watch !selected-pos)
          debug-pos (e/server (e/watch !debug-pos))
          next-player (:next state)
          possible-moves (if selected-pos
                           (e/server (logic/possible-move state selected-pos))
                           [])]
+     (Go state)
      (dom/div
       (dom/props {:class "relative bg-[url('/image/Xiangqi_board.svg')] bg-contain w-[900px] h-[1200px]"})
 
@@ -101,7 +111,8 @@
                    (e/for [[_token _event] (dom/On-all "click")]
                      (when (and selected-pos
                                 (= (subs (name (get-in board selected-pos)) 0 1) next-player))
-                       (e/server (swap! !state #(logic/move % selected-pos [row col])))
+                       (e/server
+                        (swap! !state #(logic/move % selected-pos [row col])))
                        (reset! !selected-pos nil))))))
 
       ;; Highlight bestmove-coords (red highlight)
