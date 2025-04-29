@@ -1,7 +1,19 @@
 (ns com.linzihao.web.main
   (:require [hyperfiddle.electric3 :as e]
             [hyperfiddle.electric-dom3 :as dom]
+            [missionary.core :as m]
             [com.linzihao.xiangqi.ui.render :refer [Chessboard]]))
+
+#?(:clj (defonce a (atom 1)))
+
+(comment
+  (swap! a inc)
+  :rcf)
+
+(e/defn Test [] 
+  (let [flow (m/watch (atom 0))
+        value (new flow)]
+    (dom/div (dom/text value))))
 
 (e/defn Main [ring-request]
   (e/client
@@ -10,5 +22,4 @@
      (let [path js/window.location.pathname]
        (if (= path "/xiangqi")
          (Chessboard)
-         (dom/div (dom/props {:style {:display "contents"}})
-                  (dom/h1 (dom/text "hello world!"))))))))
+         (Test))))))
