@@ -9,9 +9,17 @@
 
 (comment
   (reset! !debug-pos [8 4])
-  (require '[com.linzihao.xiangqi.fen :refer [fen->state]])
+  (require '[com.linzihao.xiangqi.fen :refer [fen->state move-str->coords]])
   (reset! !state (fen->state
                   "9/9/3k5/9/9/9/4R4/3A5/8r/4K4 b - - 0 1"))
+  
+  (move-str->coords "i1i0")
+  (reset! !state 
+          (-> 
+           (fen->state
+            "9/9/3k5/9/9/9/4R4/3A5/8r/4K4 b - - 0 1")
+           #_(logic/move [1 8] [0 8])
+           #_(logic/move [8 1] [ 8 0])))
   :rcf)
 
 (e/defn ChessPiece [{:keys [piece selected? row col next-player]}]

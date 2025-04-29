@@ -369,6 +369,7 @@
   - 记录上一步移动
   若移动不合法则返回原状态"
   [state start end]
+  (println "start" start "end" end)
   (let [[start-row start-col] start
         [end-row end-col] end
         current-piece (get-in (:board state) start)

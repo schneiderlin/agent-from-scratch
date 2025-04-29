@@ -18,6 +18,4 @@ jack in clojure-stuff 目录的 deps.edn.
 - 整理图片?
 - 视频翻译?
 - 象棋AI
-    - FEN -> GUI state
-    - move -> GUI action
     - uci protocol
