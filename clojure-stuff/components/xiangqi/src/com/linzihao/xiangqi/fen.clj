@@ -1,5 +1,6 @@
 (ns com.linzihao.xiangqi.fen
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [com.linzihao.xiangqi.interface :as logic]))
 
 (def piece-map
   {"k" :黑将, "a" :黑士, "b" :黑象, "n" :黑马, "r" :黑车, "c" :黑炮, "p" :黑卒
@@ -50,5 +51,32 @@
   (fen->state "9/9/3k5/9/9/9/4R4/3A5/8r/4K4 b - - 0 1")
   (move-str->coords "i1i0")
   (move-str->coords "e0e1") 
+  :rcf)
+
+(def piece-rev-map
+  { :黑将 "k", :黑士 "a", :黑象 "b", :黑马 "n", :黑车 "r", :黑炮 "c", :黑卒 "p"
+    :红帅 "K", :红士 "A", :红相 "B", :红马 "N", :红车 "R", :红炮 "C", :红兵 "P" })
+
+(defn board-row->fen-row [row]
+  (let [f (fn [acc x]
+            (if x
+              (conj acc (piece-rev-map x))
+              (if (and (seq acc) (re-matches #"\d+" (last acc)))
+                (conj (pop acc) (str (inc (Integer/parseInt (last acc)))))
+                (conj acc "1"))))]
+    (apply str (reduce f [] row))))
+
+(defn state->fen
+  "Convert {:board .. :next ..} state to FEN string."
+  [{:keys [board next]}]
+  (let [rows (map board-row->fen-row board)
+        turn (if (= next "红") "w" "b")]
+    (str (clojure.string/join "/" rows) " " turn " - - 0 1")))
+
+(comment
+  (require '[com.linzihao.xiangqi.interface :as logic])
+  (-> logic/state
+      state->fen
+      fen->state)
   :rcf)
 
