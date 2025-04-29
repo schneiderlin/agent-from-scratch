@@ -17,3 +17,8 @@ jack in clojure-stuff 目录的 deps.edn.
 - UI?
 - 整理图片?
 - 视频翻译?
+- 象棋AI
+    - GUI
+    - FEN -> GUI state
+    - move -> GUI action
+    - uci protocol

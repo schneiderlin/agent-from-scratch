@@ -1,0 +1,3 @@
+{:tasks {npm-install {:task (shell "npm i")}
+         tw {:doc "tailwind watch"
+             :task (shell "npx @tailwindcss/cli -i ./bases/web/resources/public/web/css/input.css -o ./bases/web/resources/public/web/css/output.css --watch")}}}

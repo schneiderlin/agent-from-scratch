@@ -1,0 +1,4 @@
+{:paths ["src" "resources"]
+ :deps {com.hyperfiddle/electric {:mvn/version "v3-alpha-SNAPSHOT"}}
+ :aliases {:test {:extra-paths ["test"]
+                  :extra-deps {}}}}

@@ -4,7 +4,8 @@
                                poly/web {:local/root "bases/web"}
                                poly/electric-main {:local/root "components/electric-main"}
                                poly/openai-client {:local/root "components/openai-client"}
-                               poly/local-file {:local/root "components/local-file"}}}
+                               poly/local-file {:local/root "components/local-file"}
+                               poly/xiangqi {:local/root "components/xiangqi"}}}
 
             :test {:extra-paths []}
 
