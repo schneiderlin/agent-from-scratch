@@ -62,10 +62,11 @@
 (e/defn Go [state]
   (e/server
    (let [new-fen (fen/state->fen state)]
-     (println "start thinking in new pos")
+     (println "start thinking in new pos" new-fen) 
      (ei/send-command engine (str "position fen " new-fen))
-     (ei/send-command engine "go depth 10")
-     nil)))
+     (println "only once")
+     #_(ei/send-command engine "go depth 10")
+     new-fen)))
 
 (e/defn Chessboard []
   (e/client
@@ -136,8 +137,10 @@
       ;; Add debug position highlight
       (when-let [[row col] debug-pos]
         (let [top (+ 100 (* row 100))
-              left (* col 100)]
-          (println "debug")
+              left (* col 100)] 
           (dom/div
            (dom/props {:class "absolute w-24 h-24 bg-blue-500/20 rounded-full"
-                       :style {:transform (str "translate(" left "px, " top "px)")}}))))))))
+                       :style {:transform (str "translate(" left "px, " top "px)")}})))))
+     #_(dom/div 
+      (dom/props {:id "fen"})
+      (dom/text go)))))
