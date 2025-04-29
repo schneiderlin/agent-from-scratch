@@ -3,17 +3,10 @@
    [missionary.core :as m]
    [clj-http.client :as http]
    [cheshire.core :as json]
-   [clojure.string :as str]
-   [clojure.java.io :as io]
+   [clojure.string :as str] 
    [com.rpl.specter :as sp]
-   [clojure.pprint :as pprint]
-   [aero.core :refer [read-config]])
+   [clojure.pprint :as pprint])
   (:import [java.io InputStream]))
-
-(def config 
-  (read-config (io/resource "openai-client/config.edn")))
-
-(def DEFAULT_MODEL "DeepSeek-R1")
 
 (defn- parse-event [raw-event] 
   (if (= raw-event "[DONE]")
@@ -23,39 +16,6 @@
 (comment
   (parse-event "{\"id\":\"e74deba9-0520-4f45-805d-61b3aefe63c8\",\"object\":\"chat.completion.chunk\",\"created\":1745735232,\"model\":\"deepseek-chat\",\"system_fingerprint\":\"fp_8802369eaa_prod0425fp8\",\"choices\":[{\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"4\"}}]},\"logprobs\":null,\"finish_reason\":null}]}")
   :rcf)
-
-(def tools
-  [{:type "function"
-    :function
-    {:name "get_weather"
-     :description "Get current temperature for provided coordinates in celsius."
-     :parameters
-     {:type "object"
-      :properties {:latitude {:type "number"}
-                   :longitude {:type "number"}}
-      :required ["latitude" "longitude"]
-      :additionalProperties false}
-     :strict true}}
-   {:type "function"
-    :function
-    {:name "add_memory"
-     :description "when user tell you something factual or explicit ask you to remember something, use this function. the memory text should be concise."
-     :parameters
-     {:type "object"
-      :properties {:memory_text {:type "string"}}
-      :required ["memory_text"]
-      :additionalProperties false}
-     :strict true}}])
-
-(def akash-client {:base-url "https://chatapi.akash.network/api/v1"
-                   :api-key (get-in config [:secrets :akash-apikey])
-                   :model DEFAULT_MODEL
-                   :tools tools})
-
-(def deepseek-client {:base-url "https://api.deepseek.com"
-                      :api-key (get-in config [:secrets :deepseek-apikey])
-                      :model "deepseek-chat"
-                      :tools tools})
 
 (defn stream-chat [{:keys [base-url api-key model tools] :as _client} messages]
   (m/ap
@@ -175,6 +135,8 @@
 
 (comment
   ;; 普通 function call
+  (require '[com.linzihao.openai-client.clients :refer [deepseek-client]])
+
   (time
    (reduce-streaming-response
     (openai-chat deepseek-client [{:role "user" :content "how's the weather in guangzhou?"}

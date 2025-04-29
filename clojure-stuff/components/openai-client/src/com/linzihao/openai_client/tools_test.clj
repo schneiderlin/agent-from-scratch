@@ -1,37 +1,31 @@
 (ns com.linzihao.openai-client.tools-test
-  (:require
-   [com.linzihao.openai-client.datalevin-tools :as datalevin-tools]
-   [com.linzihao.openai-client.core :as core]
-   [clojure.edn :as edn]
-   [cheshire.core :as json]))
+  (:require 
+   [com.linzihao.openai-client.clients :as clients]
+   [com.linzihao.openai-client.chatbot :refer [chatbot]]))
 
-(def client (update core/deepseek-client :tools concat datalevin-tools/tools))
+(def tools
+  [{:type "function"
+    :function
+    {:name "get_weather"
+     :description "Get current temperature for provided coordinates in celsius."
+     :parameters
+     {:type "object"
+      :properties {:latitude {:type "number"}
+                   :longitude {:type "number"}}
+      :required ["latitude" "longitude"]
+      :additionalProperties false}
+     :strict true}}])
 
-(comment
-  (let [json-args (json/decode "{\"qry\":\"[:find ?e ?name ?nation :where [?e :name ?name] [?e :nation ?nation] [?e :name \\\"De Morgan\\\"]]\",\"args\":\"[]\",\"limit\":1}")
-        qry (edn/read-string (get json-args "qry"))
-        args (edn/read-string (get json-args "args"))
-        limit (or (get json-args "limit") 10)]
-    (datalevin-tools/q qry args))
+(def tool->f
+  {"get_weather" (constantly 42)})
 
-  (time
-   (core/reduce-streaming-response
-    (core/openai-chat client
-                      [{:role "user" :content "find me information about De Morgan in datalevin"}
-                       (core/tool-calls->msg {:index 0,
-                                              :id "call_0_3effc9f6-5708-4931-bea7-10f367608abb",
-                                              :type "function",
-                                              :function {:name "schema", :arguments "{}"}})
-                       (core/result->tool-resp datalevin-tools/schema "call_0_3effc9f6-5708-4931-bea7-10f367608abb")
-                       (core/tool-calls->msg {:index 0,
-                                              :id "call_0_e92db31a-18e1-4d08-83ca-c5ae396274e1",
-                                              :type "function",
-                                              :function
-                                              {:name "q",
-                                               :arguments
-                                               "{\"qry\":\"[:find ?e ?name ?nation :where [?e :name ?name] [?e :nation ?nation] [?e :name \\\"De Morgan\\\"]]\",\"args\":\"[]\",\"limit\":1}"}})
-                       (core/result->tool-resp #{[3 "De Morgan" "English"]} "call_0_e92db31a-18e1-4d08-83ca-c5ae396274e1")])
-    :chunk->content identity))
+(def client
+  (-> clients/openrouter-client
+      (assoc :tools tools)
+      (assoc :tool->f tool->f)))
 
+(comment 
+  (def !history (atom [{:role "system" :content "You are a helpful assistant."}]))
+  (chatbot !history client "how's the weather in guangzhou?")
   :rcf)
 

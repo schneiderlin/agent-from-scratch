@@ -1,13 +1,7 @@
 (ns com.linzihao.openai-client.chatbot
   (:require
    [cheshire.core :as json]
-   [com.linzihao.openai-client.core :as core]
-   [com.linzihao.local-file.interface :as file-mem]))
-
-(def client
-  (-> core/deepseek-client
-      (assoc :tools file-mem/tools)
-      (assoc :tool->f file-mem/tool->f)))
+   [com.linzihao.openai-client.core :as core]))
 
 (defn tool-call->result [client {:keys [function]}]
   (let [{:keys [name arguments]} function
@@ -49,7 +43,9 @@
 
 (comment
   (def !history (atom []))
-  (chatbot !history client "how's the weather in guangzhou")
+
+  (require '[com.linzihao.openai-client.clients :as clients :refer [openrouter-client]])
+  (chatbot !history openrouter-client "how's the weather in guangzhou")
   :rcf)
 
 ;; memory system test
@@ -68,6 +64,6 @@ IMPORTANT: ALWAYS pay attention to memories, as they provide valuable context to
   
   (def !history (atom [{:role "system" :content system-prompt}]))
 
-  (chatbot !history client "") 
+  (chatbot !history openrouter-client "") 
   :rcf)
 

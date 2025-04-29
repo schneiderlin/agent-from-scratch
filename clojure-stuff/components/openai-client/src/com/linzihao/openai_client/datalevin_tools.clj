@@ -1,7 +1,5 @@
 (ns com.linzihao.openai-client.datalevin-tools
-  (:require [datalevin.core :as d]
-            [clojure.edn :as edn]))
-
+  (:require [datalevin.core :as d]))
 
 (def schema {:aka  {:db/cardinality :db.cardinality/many}
              :name {:db/valueType :db.type/string
@@ -12,30 +10,15 @@
 
 (def conn (d/get-conn "./tmp/mydb" schema))
 
-(d/transact! conn
-             [{:name "Frege", :db/id -1, :nation "France", :aka ["foo" "fred"]}
-              {:name "Peirce", :db/id -2, :nation "france"}
-              {:name "De Morgan", :db/id -3, :nation "English"}])
-
-(d/q '[:find ?nation
-       :in $ ?alias
-       :where
-       [?e :aka ?alias]
-       [?e :nation ?nation]]
-     (d/db conn)
-     "fred")
+(comment
+  (d/transact! conn
+               [{:name "Frege", :db/id -1, :nation "France", :aka ["foo" "fred"]}
+                {:name "Peirce", :db/id -2, :nation "france"}
+                {:name "De Morgan", :db/id -3, :nation "English"}])
+  :rcf)
 
 (defn q [qry args]
   (apply d/q qry (d/db conn) args))
-
-(comment
-  (q (edn/read-string
-      "[:find ?e ?name ?nation :where [?e :name ?name] [?e :nation ?nation] [?e :name \"De Morgan\"]]")
-     [])
-  
-  (q '[:find ?e ?name ?nation :where [?e :name ?name] [?e :nation ?nation] [?e :name "De Morgan"]]
-     [])
-  :rcf)
 
 (def tools
   [{:type "function"
@@ -48,6 +31,7 @@
       :required []
       :additionalProperties false}
      :strict true}}
+   
    {:type "function"
     :function
     {:name "q"
@@ -69,3 +53,7 @@
       :required ["qry args"]
       :additionalProperties false}
      :strict true}}])
+
+(def tool->f
+  {"schema" schema
+   "q" q})
