@@ -27,18 +27,21 @@
                (string? prompt) {:role "user" :content prompt}
                :else prompt)
          _ (when msg (swap! !history-atom conj msg))
-         resp (core/reduce-streaming-response
-               (core/openai-chat client
-                                 @!history-atom))]
-     (if (string? resp)
-       (swap! !history-atom conj {:role "assistant" :content resp})
-       (let [tool-call resp
-             _ (println "tool call:" tool-call)
-             rep-msg (core/tool-calls->msg tool-call)
-             res-msg (core/result->tool-resp
-                      (tool-call->result client tool-call)
-                      (:id tool-call))]
-         (swap! !history-atom conj rep-msg res-msg)
+         {:keys [content reasoning-content tool-calls] :as _resp}
+         (core/reduce-streaming-response
+          (core/openai-chat client
+                            @!history-atom))
+         bot-msg (cond-> {:role "assistant"}
+                   content (assoc :content content)
+                   reasoning-content (assoc :reasoning-content reasoning-content)
+                   tool-calls (assoc :tool_calls [tool-calls]))
+         _ (println "tool call:" tool-calls)] 
+     (if (nil? tool-calls)
+       (swap! !history-atom conj bot-msg)
+       (let [res-msg (core/result->tool-resp
+                      (tool-call->result client tool-calls)
+                      (:id tool-calls))]
+         (swap! !history-atom conj bot-msg res-msg)
          (chatbot !history-atom client))))))
 
 (comment

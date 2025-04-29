@@ -20,3 +20,8 @@
                         :api-key (get-in config [:secrets :openrouter-apikey])
                         :model "qwen/qwen3-235b-a22b:free"
                         :tools []})
+
+(def modelscope-client {:base-url "https://api-inference.modelscope.cn/v1/"
+                        :api-key (get-in config [:secrets :modelscope-apikey])
+                        :model "Qwen/Qwen3-32B"
+                        :tools []})

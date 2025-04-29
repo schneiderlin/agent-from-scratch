@@ -20,7 +20,7 @@
   {"get_weather" (constantly 42)})
 
 (def client
-  (-> clients/openrouter-client
+  (-> clients/modelscope-client
       (assoc :tools tools)
       (assoc :tool->f tool->f)))
 

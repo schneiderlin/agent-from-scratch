@@ -22,3 +22,5 @@ jack in clojure-stuff 目录的 deps.edn.
     - UI 里面 highlight bestmove
         - UI
         - 用 engine 计算 bestmove
+- browser use
+- computer use

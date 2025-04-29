@@ -42,8 +42,7 @@
          (if (next split)
            (let [event (parse-event (subs (first split) (count "data: ")))]
              (if (and (map? event) (= (:status event) :done))
-               (do (println "Received DONE token, closing stream")
-                   (.close event-stream)
+               (do (.close event-stream)
                    (m/amb))
                (m/amb event (recur (second split)))))
            (if (neg? bytes-read)
@@ -56,11 +55,12 @@
   (fn [x]
     (let [choices (:choices x)
           choice (first choices)
+          reasoning-content (-> choice :delta :reasoning_content)
           content (-> choice :delta :content)
           tool-calls (-> choice :delta :tool_calls)]
-      (if content
-        {:content content}
-        {:tool-calls tool-calls}))))
+      {:content (if (empty? content) nil content)
+       :reasoning-content (if (empty? reasoning-content) nil reasoning-content)
+       :tool-calls tool-calls})))
 
 (defn openai-chat
   [client messages]
@@ -69,59 +69,46 @@
 
 (defn combine-tool-call [acc chunk]
   (let [chunk (first chunk)]
-    (if-let [args (get-in chunk [:function :arguments])]
+    (if-let [args (get-in chunk [:function :arguments])] 
       (sp/transform [:function :arguments]
                     #(str (or % "") args)
                     acc)
-      (merge acc chunk))))
+      acc)))
 
 (comment
-  (def tool-calls-chunks [[{:index 0, :id "call_0_29cff275-a3c7-4d18-808f-68af17e74114", :type "function", :function {:name "get_weather", :arguments ""}}]
-                          [{:index 0, :function {:arguments "{\""}}]
-                          [{:index 0, :function {:arguments "latitude"}}]
-                          [{:index 0, :function {:arguments "\":"}}]
-                          [{:index 0, :function {:arguments "23"}}]
-                          [{:index 0, :function {:arguments "."}}]
-                          [{:index 0, :function {:arguments "129"}}]
-                          [{:index 0, :function {:arguments "1"}}]
-                          [{:index 0, :function {:arguments ",\""}}]
-                          [{:index 0, :function {:arguments "long"}}]
-                          [{:index 0, :function {:arguments "itude"}}]
-                          [{:index 0, :function {:arguments "\":"}}]
-                          [{:index 0, :function {:arguments "113"}}]
-                          [{:index 0, :function {:arguments "."}}]
-                          [{:index 0, :function {:arguments "264"}}]
-                          [{:index 0, :function {:arguments "4"}}]
-                          [{:index 0, :function {:arguments "}"}}]])
-
-  (reduce
-   combine-tool-call
-   (first (first tool-calls-chunks))
-   (rest tool-calls-chunks))
+  (combine-tool-call
+   {:function {:arguments {:name "get_weather"}, :id "call_d6d3e200cbd24e21b90c19", :index 0, :type "function"}}
+   [{:function {:arguments "latitude"}, :id "call_d6d3e200cbd24e21b90c19", :index 0, :type "function"}])
   :rcf)
 
 (defn reduce-streaming-response
   "输入一个 missionary flow, 实时打印每个 token 的内容. 最后返回完整的 response string."
   [flow> & _opts]
-  (let [sb (StringBuilder.)
+  (let [content-sb (StringBuilder.)
+        thinking-sb (StringBuilder.)
         main (m/reduce
-              (fn [tool-calls x]
-                (if-let [content (:content x)]
-                  (do
-                    (.append sb content)
-                    (print content)
-                    (flush)
-                    tool-calls)
-                  (let [chunk (:tool-calls x)]
-                    (if (not (nil? tool-calls))
-                      (combine-tool-call tool-calls chunk)
-                      (first chunk)))))
+              (fn [tool-calls-acc {:keys [content tool-calls reasoning-content]}] 
+                (when content
+                  (.append content-sb content)
+                  (print content)
+                  (flush))
+                (when reasoning-content
+                  (.append thinking-sb reasoning-content)
+                  (print reasoning-content)
+                  (flush))
+                (if tool-calls
+                  (let [chunk tool-calls]
+                    (if (not (nil? tool-calls-acc))
+                      (combine-tool-call tool-calls-acc chunk)
+                      (first chunk)))
+                  tool-calls-acc))
               nil flow>)
-        tool-calls-ret (m/? main) 
-        content-ret (.toString sb)]
-    (if (empty? content-ret)
-      tool-calls-ret
-      content-ret)))
+        tool-calls-ret (m/? main)
+        content-ret (.toString content-sb)
+        reasoning-content-ret (.toString thinking-sb)]
+    {:content (if (empty? content-ret) nil content-ret)
+     :reasoning-content (if (empty? reasoning-content-ret) nil reasoning-content-ret)
+     :tool-calls tool-calls-ret}))
 
 (defn tool-calls->msg [tool-call]
   {:role "assistant"
