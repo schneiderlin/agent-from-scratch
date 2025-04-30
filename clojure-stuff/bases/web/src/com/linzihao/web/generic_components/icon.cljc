@@ -2,7 +2,7 @@
   (:require [hyperfiddle.electric3 :as e]
             [hyperfiddle.electric-dom3 :as dom]))
 
-(e/defn Icon [extra-classes props Svg]
+(e/defn Icon [extra-classes props on-click Svg]
   (dom/div
    (dom/props (merge {:role "button"
                       :aria-expanded false
@@ -12,4 +12,5 @@
                                      extra-classes)
                       :aria-disabled true}
                      props))
+   (dom/On "click" on-click nil)
    (Svg)))
