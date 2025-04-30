@@ -2,17 +2,27 @@
   (:require
    [hyperfiddle.electric3 :as e]
    [hyperfiddle.electric-dom3 :as dom] 
-   [com.linzihao.web.hooks.hook :refer [Hoverable]]
-   [com.linzihao.web.svg.icon :refer [Chevron Ellipsis Plus]]))
+   [com.linzihao.web.hooks.hook :refer [Hoverable]] 
+   [com.linzihao.web.svg.icon :refer [Chevron Ellipsis Plus Document]]))
+
+(e/declare TreeLabel)
+
+(e/defn Children []
+  (dom/ul
+   (TreeLabel Document "SubPage 1")
+   (TreeLabel Document "SubPage 2")
+   (TreeLabel Document "SubPage 3")))
 
 (e/defn TreeLabel [Svg label]
-  (let [!hover? (atom false) hover? (e/watch !hover?)]
+  (let [!hover? (atom false) hover? (e/watch !hover?)
+        !expand? (atom false) expand? (e/watch !expand?)]
     (dom/div
-     (dom/props {:class "flex items-center gap-2 py-1 rounded-md cursor-pointer hover:bg-gray-100 justify-start text-left"})
+     (dom/props {:class "flex items-center gap-2 py-1 rounded-md cursor-pointer hover:bg-gray-100 justify-start text-left select-none"})
      (Hoverable !hover?)
+     (dom/On "click" #(swap! !expand? not) nil)
      ;; Left icon/chevron
      (if hover?
-       (Chevron -90)
+       (Chevron (if expand? 0 -90))
        (Svg))
      ;; Label text
      (dom/span (dom/text label))
