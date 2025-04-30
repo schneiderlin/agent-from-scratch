@@ -44,10 +44,18 @@
    (dom/props {:viewBox "0 0 20 20" :fill "none" :stroke "currentColor" :style {:width "18px" :height "18px"}})
    (svg/path (dom/props {:d "M6 2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7.828A2 2 0 0 0 15.414 7L13 4.586A2 2 0 0 0 11.586 4H6zm0 0h5a1 1 0 0 1 1 1v3a1 1 0 0 0 1 1h3M6 2v16m8-8H6" :strokeWidth "1.5" :strokeLinejoin "round" :strokeLinecap "round"}))))
 
-(e/defn Chevron []
-  (svg/svg
-   (dom/props {:viewBox "0 0 20 20" :class "chevronDownRoundedThick" :style {:width "18px" :height "18px" :display "block" :fill "rgba(55,53,47,0.35)"}})
-   (svg/path (dom/props {:d "M10.0456 14.6712C10.4524 14.6712 10.7861 14.5247 11.1035 14.1911L17.1338 8.0387C17.378 7.7946 17.5 7.4935 17.5 7.1354C17.5 6.4193 16.9139 5.8333 16.2061 5.8333C15.8477 5.8333 15.5138 5.9798 15.2539 6.2484L10.0537 11.6113L4.8454 6.2484C4.5768 5.9798 4.2513 5.8333 3.8851 5.8333C3.169 5.8333 2.5911 6.4193 2.5911 7.1354C2.5911 7.4935 2.7132 7.7946 2.9574 8.0387L8.9876 14.1911C9.3131 14.5329 9.6468 14.6712 10.0456 14.6712Z"}))))
+(e/defn Chevron
+  ([] (Chevron 0))
+  ([rotation]
+   (svg/svg
+    (dom/props {:viewBox "0 0 20 20"
+                :class "chevronDownRoundedThick"
+                :style {:width "18px"
+                        :height "18px"
+                        :display "block"
+                        :fill "rgba(55,53,47,0.35)"
+                        :transform (str "rotate(" rotation "deg)")}})
+    (svg/path (dom/props {:d "M10.0456 14.6712C10.4524 14.6712 10.7861 14.5247 11.1035 14.1911L17.1338 8.0387C17.378 7.7946 17.5 7.4935 17.5 7.1354C17.5 6.4193 16.9139 5.8333 16.2061 5.8333C15.8477 5.8333 15.5138 5.9798 15.2539 6.2484L10.0537 11.6113L4.8454 6.2484C4.5768 5.9798 4.2513 5.8333 3.8851 5.8333C3.169 5.8333 2.5911 6.4193 2.5911 7.1354C2.5911 7.4935 2.7132 7.7946 2.9574 8.0387L8.9876 14.1911C9.3131 14.5329 9.6468 14.6712 10.0456 14.6712Z"})))))
 
 (e/defn Ellipsis []
   (svg/svg

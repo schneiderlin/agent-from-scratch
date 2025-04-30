@@ -12,7 +12,7 @@
      (Hoverable !hover?)
      ;; Left icon/chevron
      (if hover?
-       (Chevron)
+       (Chevron -90)
        (Svg))
      ;; Label text
      (dom/span (dom/text label))
