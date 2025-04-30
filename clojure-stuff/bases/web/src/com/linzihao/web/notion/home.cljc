@@ -33,7 +33,7 @@
         (dom/li (dom/props {:class "py-1"}) (dom/text "Page 2"))
         (dom/li (dom/props {:class "py-1"}) (dom/text "Another Page")))
        (dom/div
-        (dom/props {:class "absolute top-0 right-0 bottom-0 w-0.5 bg-transparent hover:bg-gray-400 cursor-col-resize select-none"})
+        (dom/props {:class "absolute top-0 right-0 bottom-0 w-2 hover:w-0.5 bg-transparent hover:bg-gray-400 cursor-col-resize select-none"})
         (dom/On "mousedown" (fn [e] 
                               (reset! !start-info {:start-x (.-clientX e)
                                                    :start-width width})
