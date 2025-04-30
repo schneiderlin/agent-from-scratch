@@ -2,6 +2,7 @@
   (:require
    [com.linzihao.web.generic-components.resize-handle :refer [ResizeHandle]]
    [com.linzihao.web.generic-components.icon :refer [Icon IconButton]]
+   [com.linzihao.web.generic-components.label-button :refer [LabelButton]]
    [hyperfiddle.electric3 :as e]
    [hyperfiddle.electric-dom3 :as dom]
    [hyperfiddle.electric-svg3 :as svg]))
@@ -55,33 +56,27 @@
 
 (e/defn Tools []
   (dom/div
-   (dom/props {:class "my-3"}) 
+   (dom/props {:class "my-3"})
    (dom/ul
     (dom/props {:class "flex flex-col"})
-    (dom/li
-     (dom/props {:class "flex items-center gap-2 px-2 py-1 rounded-md cursor-pointer hover:bg-gray-100 justify-start text-left"})
-     (Icon [] {} 
-           (e/fn []
-             (svg/svg
-              (dom/props {:viewBox "0 0 20 20" :fill "none" :stroke "currentColor" :style {:width "18px" :height "18px"}})
-              (svg/path (dom/props {:d "M8.5 3.5a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm7 13-3.5-3.5" :strokeWidth "1.5" :strokeLinecap "round" :strokeLinejoin "round"})))))
-     (dom/span (dom/text "Search")))
-    (dom/li
-     (dom/props {:class "flex items-center gap-2 px-2 py-1 rounded-md cursor-pointer hover:bg-gray-100 justify-start text-left"})
-     (Icon [] {}
-           (e/fn []
-             (svg/svg
-              (dom/props {:viewBox "0 0 20 20" :fill "none" :stroke "currentColor" :style {:width "18px" :height "18px"}})
-              (svg/path (dom/props {:d "M3 9.5 10 4l7 5.5V16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" :strokeWidth "1.5" :strokeLinejoin "round"})))))
-     (dom/span (dom/text "Home")))
-    (dom/li
-     (dom/props {:class "flex items-center gap-2 px-2 py-1 rounded-md cursor-pointer hover:bg-gray-100 justify-start text-left"})
-     (Icon [] {}
-           (e/fn []
-             (svg/svg
-              (dom/props {:viewBox "0 0 20 20" :fill "none" :stroke "currentColor" :style {:width "18px" :height "18px"}})
-              (svg/path (dom/props {:d "M3.5 6.5v7a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-9a2 2 0 0 0-2 2zm0 7 3.5-3 2.5 2 2.5-2 3.5 3" :strokeWidth "1.5" :strokeLinejoin "round"})))))
-     (dom/span (dom/text "Inbox"))))))
+    (LabelButton
+     (e/fn []
+       (svg/svg
+        (dom/props {:viewBox "0 0 20 20" :fill "none" :stroke "currentColor" :style {:width "18px" :height "18px"}})
+        (svg/path (dom/props {:d "M8.5 3.5a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm7 13-3.5-3.5" :strokeWidth "1.5" :strokeLinecap "round" :strokeLinejoin "round"}))))
+     "Search")
+    (LabelButton
+     (e/fn []
+       (svg/svg
+        (dom/props {:viewBox "0 0 20 20" :fill "none" :stroke "currentColor" :style {:width "18px" :height "18px"}})
+        (svg/path (dom/props {:d "M3 9.5 10 4l7 5.5V16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" :strokeWidth "1.5" :strokeLinejoin "round"}))))
+     "Home")
+    (LabelButton
+     (e/fn []
+       (svg/svg
+        (dom/props {:viewBox "0 0 20 20" :fill "none" :stroke "currentColor" :style {:width "18px" :height "18px"}})
+        (svg/path (dom/props {:d "M3.5 6.5v7a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-9a2 2 0 0 0-2 2zm0 7 3.5-3 2.5 2 2.5-2 3.5 3" :strokeWidth "1.5" :strokeLinejoin "round"}))))
+     "Inbox"))))
 
 (e/defn Sidebar []
   (let [!width (atom 200) width (e/watch !width)
@@ -94,9 +89,6 @@
                    :style {:width (str width "px")}})
        (SidebarTop !hide?)
        (Tools)
-       (dom/h3
-        (dom/props {:class "text-lg font-semibold mb-3"})
-        (dom/text "Sidebar"))
        (dom/ul
         (dom/li (dom/props {:class "py-1"}) (dom/text "Page 1"))
         (dom/li (dom/props {:class "py-1"}) (dom/text "Page 2"))
