@@ -6,14 +6,15 @@
             [com.linzihao.web.notion.home :refer [NotionHome]]))
 
 #?(:clj (defonce a (atom 1)))
+#?(:clj (def flow (m/watch a)))
+
 
 (comment
   (swap! a inc)
   :rcf)
 
 (e/defn Test [] 
-  (let [flow (m/watch (atom 0))
-        value (new flow)]
+  (let [value (e/server (e/input flow))]
     (dom/div (dom/text value))))
 
 (e/defn Main [ring-request]

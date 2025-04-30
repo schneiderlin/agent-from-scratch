@@ -18,9 +18,10 @@ jack in clojure-stuff 目录的 deps.edn.
 - 整理图片?
 - 视频翻译?
 - 象棋AI
-    - state -> fen
     - UI 里面 highlight bestmove
-        - UI
         - 用 engine 计算 bestmove
+    - electric 管理 life cycle, 当 chessboard 删除的时候停止 engine
+    - 每次 state 更新的时候, bestmove 就更新
+        - 在创建 bestmove flow 的时候, 除了要输入 engine, 还需要输入一个 state atom
 - browser use
 - computer use
