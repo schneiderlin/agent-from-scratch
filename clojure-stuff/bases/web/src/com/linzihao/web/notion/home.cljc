@@ -2,13 +2,12 @@
   (:require
    [com.linzihao.web.generic-components.resize-handle :refer [ResizeHandle]]
    [com.linzihao.web.generic-components.icon :refer [IconButton]]
-   [com.linzihao.web.svg.icon :refer [Compose Home Search Inbox Document]]
+   [com.linzihao.web.svg.icon :refer [DoubleLeftArrow Compose Home Search Inbox Document]]
    [com.linzihao.web.generic-components.label-button :refer [LabelButton]]
    [com.linzihao.web.generic-components.tree-label :refer [TreeLabel]]
    [com.linzihao.web.hooks.hook :refer [Hoverable]]
    [hyperfiddle.electric3 :as e]
-   [hyperfiddle.electric-dom3 :as dom]
-   [hyperfiddle.electric-svg3 :as svg]))
+   [hyperfiddle.electric-dom3 :as dom]))
 
 (e/defn CloseSidebarButton [hover? !hide-sidebar?]
   (IconButton
@@ -16,15 +15,7 @@
    {:tabIndex -1
     :aria-label "Close sidebar"}
    (fn [] (reset! !hide-sidebar? true))
-   (e/fn []
-     (svg/svg
-      (dom/props {:aria-hidden "true"
-                  :role "graphics-symbol"
-                  :viewBox "0 0 20 20"
-                  :class "arrowChevronDoubleBackward"
-                  :style {:width "22px" :height "22px" :display "block" :fill "inherit" :flex-shrink 0}})
-      (svg/path (dom/props {:d "M3.608 10.442a.625.625 0 0 1 0-.884l5.4-5.4a.625.625 0 0 1 .884.884L4.934 10l4.958 4.958a.625.625 0 1 1-.884.884z"}))
-      (svg/path (dom/props {:d "m14.508 4.158-5.4 5.4a.625.625 0 0 0 0 .884l5.4 5.4a.625.625 0 1 0 .884-.884L10.434 10l4.958-4.958a.625.625 0 1 0-.884-.884"}))))))
+   DoubleLeftArrow))
 
 (e/defn NewPageButton []
   (IconButton
