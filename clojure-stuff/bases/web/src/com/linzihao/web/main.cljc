@@ -2,7 +2,8 @@
   (:require [hyperfiddle.electric3 :as e]
             [hyperfiddle.electric-dom3 :as dom]
             [missionary.core :as m]
-            [com.linzihao.xiangqi.ui.render :refer [Chessboard]]))
+            [com.linzihao.xiangqi.ui.render :refer [Chessboard]]
+            [com.linzihao.web.notion.home :refer [NotionHome]]))
 
 #?(:clj (defonce a (atom 1)))
 
@@ -20,6 +21,7 @@
    (binding [dom/node js/document.body
              e/http-request (e/server ring-request)]
      (let [path js/window.location.pathname]
-       (if (= path "/xiangqi")
-         (Chessboard)
+       (case path
+         "/notion" (NotionHome)
+         "/xiangqi" (Chessboard)
          (Test))))))
