@@ -10,7 +10,10 @@
 (defonce !selected-pos (atom nil))
 #?(:clj (def !debug-pos (atom nil)))
 #?(:clj (defonce !state (atom logic/state)))
-#?(:clj (defonce engine (ei/start-engine "/home/linzihao/Desktop/workspace/private/agent-from-scratch/data/pikafish/pikafish-avx2")))
+;; wsl
+;; #?(:clj (defonce engine (ei/start-engine "/home/linzihao/Desktop/workspace/private/agent-from-scratch/data/pikafish/pikafish-avx2")))
+;; 公司
+#?(:clj (defonce engine (ei/start-engine "/home/zihao/workspace/private/agent-from-scratch/data/pikafish/pikafish-avx2")))
 #?(:clj (defonce !bestmove (atom nil)))
 ;; #?(:clj (defonce bestmove-flow (m/watch !bestmove)))
 #?(:clj (defonce bestmove-flow (ei/engine->bestmove-flow engine)))
