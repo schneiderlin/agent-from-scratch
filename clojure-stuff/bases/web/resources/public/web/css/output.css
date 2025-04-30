@@ -491,6 +491,9 @@
   .py-1 {
     padding-block: calc(var(--spacing) * 1);
   }
+  .text-left {
+    text-align: left;
+  }
   .text-5xl {
     font-size: var(--text-5xl);
     line-height: var(--tw-leading, var(--text-5xl--line-height));
