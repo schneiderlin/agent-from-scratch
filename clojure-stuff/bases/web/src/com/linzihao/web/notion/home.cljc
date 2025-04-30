@@ -53,39 +53,34 @@
 
 (e/defn Tools []
   (dom/div
-   (dom/props {:class "my-3"})
-   (dom/div
-    (dom/props {:class "text-xs font-semibold text-gray-500 px-1 mb-1"})
-    (dom/text "TOOLS"))
+   (dom/props {:class "my-3"}) 
    (dom/ul
+    (dom/props {:class "flex flex-col"})
     (dom/li
      (dom/props {:class "flex items-center gap-2 px-2 py-1 rounded-md cursor-pointer hover:bg-gray-100"})
-
      (Icon [] {}
            #(println "Search clicked")
            (e/fn []
              (svg/svg
               (dom/props {:viewBox "0 0 20 20" :fill "none" :stroke "currentColor" :style {:width "18px" :height "18px"}})
               (svg/path (dom/props {:d "M8.5 3.5a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm7 13-3.5-3.5" :strokeWidth "1.5" :strokeLinecap "round" :strokeLinejoin "round"})))))
-     (dom/span (dom/text "Search"))
-     (dom/li
-      (dom/props {:class "flex items-center gap-2 px-2 py-1 rounded-md cursor-pointer hover:bg-gray-100"})
-      (Icon [] {} #(println "Home clicked")
-            (e/fn []
-              (svg/svg
-               (dom/props {:viewBox "0 0 20 20" :fill "none" :stroke "currentColor" :style {:width "18px" :height "18px"}})
-               (svg/path (dom/props {:d "M3 9.5 10 4l7 5.5V16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" :strokeWidth "1.5" :strokeLinejoin "round"}))))
-            )
-      (dom/span (dom/text "Home"))
-      (dom/li
-       (dom/props {:class "flex items-center gap-2 px-2 py-1 rounded-md cursor-pointer hover:bg-gray-100"})
-       (Icon [] {} #(println "Inbox clicked")
-             (e/fn []
-               (svg/svg
-                (dom/props {:viewBox "0 0 20 20" :fill "none" :stroke "currentColor" :style {:width "18px" :height "18px"}})
-                (svg/path (dom/props {:d "M3.5 6.5v7a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-9a2 2 0 0 0-2 2zm0 7 3.5-3 2.5 2 2.5-2 3.5 3" :strokeWidth "1.5" :strokeLinejoin "round"}))))
-             )
-       (dom/span (dom/text "Inbox"))))))))
+     (dom/span (dom/text "Search")))
+    (dom/li
+     (dom/props {:class "flex items-center gap-2 px-2 py-1 rounded-md cursor-pointer hover:bg-gray-100"})
+     (Icon [] {} #(println "Home clicked")
+           (e/fn []
+             (svg/svg
+              (dom/props {:viewBox "0 0 20 20" :fill "none" :stroke "currentColor" :style {:width "18px" :height "18px"}})
+              (svg/path (dom/props {:d "M3 9.5 10 4l7 5.5V16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z" :strokeWidth "1.5" :strokeLinejoin "round"})))))
+     (dom/span (dom/text "Home")))
+    (dom/li
+     (dom/props {:class "flex items-center gap-2 px-2 py-1 rounded-md cursor-pointer hover:bg-gray-100"})
+     (Icon [] {} #(println "Inbox clicked")
+           (e/fn []
+             (svg/svg
+              (dom/props {:viewBox "0 0 20 20" :fill "none" :stroke "currentColor" :style {:width "18px" :height "18px"}})
+              (svg/path (dom/props {:d "M3.5 6.5v7a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-9a2 2 0 0 0-2 2zm0 7 3.5-3 2.5 2 2.5-2 3.5 3" :strokeWidth "1.5" :strokeLinejoin "round"})))))
+     (dom/span (dom/text "Inbox"))))))
 
 (e/defn Sidebar []
   (let [!width (atom 200) width (e/watch !width)
