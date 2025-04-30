@@ -1,4 +1,5 @@
 {:paths ["src" "resources"]
- :deps {com.hyperfiddle/electric {:mvn/version "v3-alpha-SNAPSHOT"}}
+ :deps {com.hyperfiddle/electric {:mvn/version "v3-alpha-SNAPSHOT"}
+        aero/aero {:mvn/version "1.1.6"}}
  :aliases {:test {:extra-paths ["test"]
                   :extra-deps {}}}}

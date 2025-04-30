@@ -3,18 +3,21 @@
    [missionary.core :as m]
    [hyperfiddle.electric3 :as e]
    [hyperfiddle.electric-dom3 :as dom]
+   #?(:clj [com.linzihao.xiangqi.config :refer [engine-path]])
    #?(:clj [com.linzihao.xiangqi.interface :as logic])
    #?(:clj [com.linzihao.xiangqi.engine.interface :as ei])
    #?(:clj [com.linzihao.xiangqi.fen :as fen])))
+
+
 
 (defonce !selected-pos (atom nil))
 #?(:clj (def !debug-pos (atom nil)))
 #?(:clj (defonce !state (atom logic/state)))
 ;; wsl
-;; #?(:clj (defonce engine (ei/start-engine "/home/linzihao/Desktop/workspace/private/agent-from-scratch/data/pikafish/pikafish-avx2")))
+#?(:clj (defonce engine (ei/start-engine engine-path)))
 ;; 公司
 ;; 用 e/on-unmount 管理 engine lifecycle
-#?(:clj (defonce engine (ei/start-engine "/home/zihao/workspace/private/agent-from-scratch/data/pikafish/pikafish-avx2")))
+;; #?(:clj (defonce engine (ei/start-engine "/home/zihao/workspace/private/agent-from-scratch/data/pikafish/pikafish-avx2")))
 #?(:clj (defonce !bestmove (atom nil)))
 ;; #?(:clj (defonce bestmove-flow (m/watch !bestmove)))
 #?(:clj (defonce bestmove-flow (ei/engine->bestmove-flow engine)))
