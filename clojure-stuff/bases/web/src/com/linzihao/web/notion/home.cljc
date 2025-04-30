@@ -4,6 +4,8 @@
    [com.linzihao.web.generic-components.icon :refer [IconButton]]
    [com.linzihao.web.svg.icon :refer [Compose Home Search Inbox Document]]
    [com.linzihao.web.generic-components.label-button :refer [LabelButton]]
+   [com.linzihao.web.generic-components.tree-label :refer [TreeLabel]]
+   [com.linzihao.web.hooks.hook :refer [Hoverable]]
    [hyperfiddle.electric3 :as e]
    [hyperfiddle.electric-dom3 :as dom]
    [hyperfiddle.electric-svg3 :as svg]))
@@ -32,12 +34,11 @@
    Compose))
 
 (e/defn SidebarTop [!hide?]
-  (let [!hover? (atom false) hover? (e/watch !hover?)] 
+  (let [!hover? (atom false) hover? (e/watch !hover?)]
     (dom/div
      (dom/props {:class "select-none transition-colors ease-in duration-75 cursor-pointer flex items-center min-w-0 h-8 w-auto my-1.5 mx-2 rounded-lg px-0"
                  :style {:user-select "none" :transition "background 20ms ease-in"}})
-     (dom/On "mouseover" #(reset! !hover? true) nil)
-     (dom/On "mouseleave" #(reset! !hover? false) nil)
+     (Hoverable !hover?)
      (dom/div (dom/text "Linzihao's workspace"))
      ;; Right side: close sidebar and new page icons
      (dom/div
@@ -68,10 +69,10 @@
        (SidebarTop !hide?)
        (Tools)
        (dom/ul
-        (LabelButton Document "Page 1")
-        (LabelButton Document "Page 2")
-        (LabelButton Document "Page 3")
-        (LabelButton Document "Page 4"))
+        (TreeLabel Document "Page 1")
+        (TreeLabel Document "Page 2")
+        (TreeLabel Document "Page 3")
+        (TreeLabel Document "Page 4"))
        (ResizeHandle 200 400 !width)))))
 
 (e/defn NotionHome []
