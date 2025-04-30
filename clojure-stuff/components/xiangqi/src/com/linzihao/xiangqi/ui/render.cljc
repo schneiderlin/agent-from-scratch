@@ -13,6 +13,7 @@
 ;; wsl
 ;; #?(:clj (defonce engine (ei/start-engine "/home/linzihao/Desktop/workspace/private/agent-from-scratch/data/pikafish/pikafish-avx2")))
 ;; 公司
+;; 用 e/on-unmount 管理 engine lifecycle
 #?(:clj (defonce engine (ei/start-engine "/home/zihao/workspace/private/agent-from-scratch/data/pikafish/pikafish-avx2")))
 #?(:clj (defonce !bestmove (atom nil)))
 ;; #?(:clj (defonce bestmove-flow (m/watch !bestmove)))
