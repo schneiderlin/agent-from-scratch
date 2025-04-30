@@ -424,6 +424,9 @@
       background-color: color-mix(in oklab, var(--color-blue-500) 20%, transparent);
     }
   }
+  .bg-gray-200 {
+    background-color: var(--color-gray-200);
+  }
   .bg-green-500 {
     background-color: var(--color-green-500);
   }
@@ -607,6 +610,13 @@
     &:hover {
       @media (hover: hover) {
         width: calc(var(--spacing) * 0.5);
+      }
+    }
+  }
+  .hover\:bg-gray-200 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-gray-200);
       }
     }
   }
