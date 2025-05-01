@@ -264,6 +264,12 @@
   .mr-1 {
     margin-right: calc(var(--spacing) * 1);
   }
+  .mb-0 {
+    margin-bottom: calc(var(--spacing) * 0);
+  }
+  .mb-1 {
+    margin-bottom: calc(var(--spacing) * 1);
+  }
   .ml-1 {
     margin-left: calc(var(--spacing) * 1);
   }
@@ -317,6 +323,9 @@
   }
   .h-screen {
     height: 100vh;
+  }
+  .min-h-\[28px\] {
+    min-height: 28px;
   }
   .w-2 {
     width: calc(var(--spacing) * 2);
@@ -492,8 +501,14 @@
   .px-0 {
     padding-inline: calc(var(--spacing) * 0);
   }
+  .px-2 {
+    padding-inline: calc(var(--spacing) * 2);
+  }
   .py-1 {
     padding-block: calc(var(--spacing) * 1);
+  }
+  .py-2 {
+    padding-block: calc(var(--spacing) * 2);
   }
   .text-left {
     text-align: left;
@@ -501,6 +516,16 @@
   .text-5xl {
     font-size: var(--text-5xl);
     line-height: var(--tw-leading, var(--text-5xl--line-height));
+  }
+  .text-\[12px\] {
+    font-size: 12px;
+  }
+  .text-\[14px\] {
+    font-size: 14px;
+  }
+  .leading-4 {
+    --tw-leading: calc(var(--spacing) * 4);
+    line-height: calc(var(--spacing) * 4);
   }
   .font-bold {
     --tw-font-weight: var(--font-weight-bold);
@@ -511,6 +536,9 @@
   }
   .whitespace-nowrap {
     white-space: nowrap;
+  }
+  .text-\[rgba\(70\,68\,64\,0\.45\)\] {
+    color: rgba(70,68,64,0.45);
   }
   .text-neutral-800 {
     color: var(--color-neutral-800);
@@ -655,6 +683,10 @@
   inherits: false;
   initial-value: solid;
 }
+@property --tw-leading {
+  syntax: "*";
+  inherits: false;
+}
 @property --tw-font-weight {
   syntax: "*";
   inherits: false;
@@ -751,6 +783,7 @@
       --tw-skew-x: initial;
       --tw-skew-y: initial;
       --tw-border-style: solid;
+      --tw-leading: initial;
       --tw-font-weight: initial;
       --tw-shadow: 0 0 #0000;
       --tw-shadow-color: initial;

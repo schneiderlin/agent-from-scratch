@@ -2,36 +2,15 @@
   (:require
    [hyperfiddle.electric3 :as e]
    [hyperfiddle.electric-dom3 :as dom]
-   #_[com.linzihao.web.svg.icon :refer [Star Link Duplicate Compose ArrowTurnUpRight Trash ArrowSquarePathUpDown ArrowDiagonalUpRight PeekSide]]))
+   [com.linzihao.web.generic-components.rich-label :refer [RichLabel]]
+   [com.linzihao.web.svg.icon :refer [Document Star Duplicate Compose ArrowDiagonalUpRight
+                                      Trash]]))
 
-(e/defn MenuItem [icon label shortcut selected?]
-  (dom/div
-   (dom/props {:tabIndex -1
-               :style (merge {:user-select "none" :transition "background 20ms ease-in"
-                              :cursor "pointer" :width "100%" :display "flex" :border-radius "6px"}
-                             (when selected? {:background "rgba(55, 53, 47, 0.06)"}))})
-   (dom/div
-    (dom/props {:style {:display "flex" :align-items "center" :gap "8px" :line-height "120%"
-                        :width "100%" :user-select "none" :min-height "28px" :font-size "14px"
-                        :padding-left "8px" :padding-right "8px"}})
-    ;; Icon
-    (dom/div
-     (dom/props {:style {:display "flex" :align-items "center" :justify-content "center"
-                         :min-width "20px" :min-height "20px"}})
-     icon)
-    ;; Label
-    (dom/div
-     (dom/props {:style {:margin-left "0px" :margin-right "0px" :min-width "0px" :flex "1 1 auto"}})
-     (dom/div
-      (dom/props {:style {:white-space "nowrap" :overflow "hidden" :text-overflow "ellipsis"}})
-      (dom/text label)))
-    ;; Shortcut (optional)
-    (when shortcut
-      (dom/div
-       (dom/props {:style {:margin-left "auto" :min-width "0px" :flex-shrink 0}})
-       (dom/span
-        (dom/props {:style {:color "rgba(70, 68, 64, 0.45)"}})
-        (dom/text shortcut)))))))
+(e/defn MenuItem [Icon label shortcut selected?]
+  (RichLabel
+   (e/fn [_] (Icon))
+   label
+   (e/fn [_])))
 
 (e/defn PageOptions []
   (dom/div
@@ -47,44 +26,25 @@
      (dom/props {:style {:gap "1px" :position "relative" :padding "4px"
                          :display "flex" :flex-direction "column"}})
      ;; Menu item: Add to Favorites
-     #_(MenuItem {:icon (Star) :label "Add to Favorites"}))
+     (MenuItem Document "Add to Favorites" nil nil))
     ;; Divider + more items
-    #_(dom/div
+    (dom/div
      (dom/props {:style {:gap "1px" :position "relative" :padding "4px"
                          :display "flex" :flex-direction "column" :margin-top "1px"}})
      (dom/div
       (dom/props {:style {:position "absolute" :top "-1px" :left "12px" :right "12px"
                           :height "1px" :background "rgba(55, 53, 47, 0.09)"}}))
-     (menu-item {:icon (Link) :label "Copy link"})
-     (menu-item {:icon (Duplicate) :label "Duplicate" :shortcut "Ctrl+D" :selected? true})
-     (menu-item {:icon (Compose) :label "Rename" :shortcut "Ctrl+⇧+R"})
-     (menu-item {:icon (ArrowTurnUpRight) :label "Move to" :shortcut "Ctrl+⇧+P"})
-     (menu-item {:icon (Trash) :label "Move to Trash"}))
-    ;; Divider + more items
-    #_(dom/div
-     (dom/props {:style {:gap "1px" :position "relative" :padding "8px 4px"
-                         :display "flex" :flex-direction "column" :margin-top "1px"}})
-     (dom/div
-      (dom/props {:style {:position "absolute" :top "-1px" :left "12px" :right "12px"
-                          :height "1px" :background "rgba(55, 53, 47, 0.09)"}}))
-     ;; Last edited info
-     (dom/div
-      (dom/props {:style {:display "flex" :align-items "center" :gap "8px" :line-height "120%"
-                          :width "100%" :user-select "none" :min-height "28px" :font-size "14px"
-                          :padding-left "8px" :padding-right "8px"}})
-      (dom/div
-       (dom/props {:style {:margin-left "0px" :margin-right "0px" :min-width "0px"
-                           :flex "1 1 auto"}})
-       (dom/div
-        (dom/props {:style {:font-size "12px" :line-height "16px" :color "rgba(70, 68, 64, 0.45)"
-                            :margin-bottom "4px"}})
-        (dom/text "Last edited by 林子豪"))
-       (dom/div
-        (dom/props {:style {:font-size "12px" :line-height "16px" :color "rgba(70, 68, 64, 0.45)"
-                            :white-space "nowrap" :overflow "hidden" :text-overflow "ellipsis"
-                            :margin-bottom "0px"}})
-        (dom/text "Mar 21, 2023, 8:47 AM"))))))
-   ;; Bottom sticky portal
-   #_(dom/div
-      (dom/props {:class "sticky-portal-target" :data-sticky-stack-name "default"
-                  :style {:position "sticky" :z-index 85 :width "100%" :bottom "0px" :left "0px" :flex "0 1 0%"}}))))
+     (MenuItem Star "Copy link" nil nil)
+     (MenuItem Duplicate "Duplicate" nil nil)
+     (MenuItem Compose "Rename" nil nil)
+     (MenuItem ArrowDiagonalUpRight "Move to" nil nil)
+     (MenuItem Trash "Move to Trash" nil nil)))
+   ;; last modified info
+   (dom/div
+    (dom/props {:class "flex flex-col gap-0 w-full select-none min-h-[28px] text-[14px] px-2 py-2"})
+    (dom/div
+     (dom/props {:class "text-[12px] leading-4 text-[rgba(70,68,64,0.45)] mb-1"})
+     (dom/text "Last edited by 林子豪"))
+    (dom/div
+     (dom/props {:class "text-[12px] leading-4 text-[rgba(70,68,64,0.45)] whitespace-nowrap overflow-hidden text-ellipsis mb-0"})
+     (dom/text "Mar 21, 2023, 8:47 AM")))))
