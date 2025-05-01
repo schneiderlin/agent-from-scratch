@@ -55,7 +55,7 @@
       (dom/text "hide")
       (dom/div
        (dom/props {:id "sidebar"
-                   :class "relative border border-gray-300 p-4 min-w-[200px] max-w-[400px] h-screen overflow-hidden"
+                   :class "relative border border-gray-300 p-4 min-w-[200px] max-w-[400px] h-screen"
                    :style {:width (str width "px")}})
        (SidebarTop !hide?)
        (Tools)
