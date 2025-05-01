@@ -6,11 +6,14 @@
    [com.linzihao.web.svg.icon :refer [Document Star Duplicate Compose ArrowDiagonalUpRight
                                       Trash]]))
 
-(e/defn MenuItem [Icon label shortcut selected?]
+(e/defn MenuItem [Icon label shortcut]
   (RichLabel
    (e/fn [_] (Icon))
    label
-   (e/fn [_])))
+   (e/fn [_]
+     (dom/span
+      (dom/props {:class "text-[12px] text-neutral-800 whitespace-nowrap"})
+      (dom/text shortcut)))))
 
 (e/defn PageOptions []
   (dom/div
@@ -26,7 +29,7 @@
      (dom/props {:style {:gap "1px" :position "relative" :padding "4px"
                          :display "flex" :flex-direction "column"}})
      ;; Menu item: Add to Favorites
-     (MenuItem Document "Add to Favorites" nil nil))
+     (MenuItem Document "Add to Favorites" nil))
     ;; Divider + more items
     (dom/div
      (dom/props {:style {:gap "1px" :position "relative" :padding "4px"
@@ -34,11 +37,11 @@
      (dom/div
       (dom/props {:style {:position "absolute" :top "-1px" :left "12px" :right "12px"
                           :height "1px" :background "rgba(55, 53, 47, 0.09)"}}))
-     (MenuItem Star "Copy link" nil nil)
-     (MenuItem Duplicate "Duplicate" nil nil)
-     (MenuItem Compose "Rename" nil nil)
-     (MenuItem ArrowDiagonalUpRight "Move to" nil nil)
-     (MenuItem Trash "Move to Trash" nil nil)))
+     (MenuItem Star "Copy link" nil)
+     (MenuItem Duplicate "Duplicate" "Ctrl+D")
+     (MenuItem Compose "Rename" "Ctrl+⇧+R")
+     (MenuItem ArrowDiagonalUpRight "Move to" "Ctrl+⇧+P")
+     (MenuItem Trash "Move to Trash" nil)))
    ;; last modified info
    (dom/div
     (dom/props {:class "flex flex-col gap-0 w-full select-none min-h-[28px] text-[14px] px-2 py-2"})
