@@ -269,6 +269,9 @@
   .h-24 {
     height: calc(var(--spacing) * 24);
   }
+  .h-\[20px\] {
+    height: 20px;
+  }
   .h-\[1200px\] {
     height: 1200px;
   }
@@ -290,11 +293,17 @@
   .w-24 {
     width: calc(var(--spacing) * 24);
   }
+  .w-\[20px\] {
+    width: 20px;
+  }
   .w-\[900px\] {
     width: 900px;
   }
   .w-auto {
     width: auto;
+  }
+  .w-full {
+    width: 100%;
   }
   .max-w-\[400px\] {
     max-width: 400px;
