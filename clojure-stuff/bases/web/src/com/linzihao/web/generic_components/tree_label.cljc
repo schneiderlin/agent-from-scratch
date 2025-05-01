@@ -7,13 +7,13 @@
 
 (e/declare TreeLabel)
 
-(e/defn Children []
+(e/defn MockChildren []
   (dom/ul
-   (TreeLabel Document "SubPage 1")
-   (TreeLabel Document "SubPage 2")
-   (TreeLabel Document "SubPage 3")))
+   (TreeLabel Document "SubPage 1" MockChildren)
+   (TreeLabel Document "SubPage 2" MockChildren)
+   (TreeLabel Document "SubPage 3" MockChildren)))
 
-(e/defn TreeLabel [Svg label]
+(e/defn TreeLabel [Svg label Children]
   (let [!hover? (atom false) hover? (e/watch !hover?)
         !expand? (atom false) expand? (e/watch !expand?)]
     (dom/div
@@ -25,7 +25,9 @@
        (Chevron (if expand? 0 -90))
        (Svg))
      ;; Label text
-     (dom/span (dom/text label))
+     (dom/span
+      (dom/props {:class "flex-1 overflow-hidden whitespace-nowrap text-ellipsis"})
+      (dom/text label))
      ;; Right action icons
      (dom/div
       (dom/props {:class [(if hover? "opacity-100" "opacity-100") "flex items-center justify-center ml-auto"]})
@@ -36,4 +38,9 @@
       (dom/div
        (dom/props {:role "button" :tabIndex 0 :aria-label "Add a page inside"
                    :class "select-none transition-colors duration-75 cursor-pointer flex items-center justify-center w-5 h-5 rounded-md ml-1"})
-       (Plus))))))
+       (Plus))))
+    ;; Render children if expanded
+    (when expand?
+      (dom/div
+       (dom/props {:class "ml-2"})
+       (Children)))))

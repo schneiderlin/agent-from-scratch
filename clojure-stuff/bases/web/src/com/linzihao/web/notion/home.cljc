@@ -4,7 +4,7 @@
    [com.linzihao.web.generic-components.icon :refer [IconButton]]
    [com.linzihao.web.svg.icon :refer [DoubleLeftArrow Compose Home Search Inbox Document]]
    [com.linzihao.web.generic-components.label-button :refer [LabelButton]]
-   [com.linzihao.web.generic-components.tree-label :refer [TreeLabel]]
+   [com.linzihao.web.generic-components.tree-label :refer [TreeLabel MockChildren]]
    [com.linzihao.web.hooks.hook :refer [Hoverable]]
    [hyperfiddle.electric3 :as e]
    [hyperfiddle.electric-dom3 :as dom]))
@@ -60,10 +60,10 @@
        (SidebarTop !hide?)
        (Tools)
        (dom/ul
-        (TreeLabel Document "Page 1")
-        (TreeLabel Document "Page 2")
-        (TreeLabel Document "Page 3")
-        (TreeLabel Document "Page 4"))
+        (TreeLabel Document "Page 1" MockChildren)
+        (TreeLabel Document "Page 2" MockChildren)
+        (TreeLabel Document "Page 3" MockChildren)
+        (TreeLabel Document "Page 4" MockChildren))
        (ResizeHandle 200 400 !width)))))
 
 (e/defn NotionHome []
