@@ -95,21 +95,25 @@
 
 ;; 在 electric 里面, constructor 好像有特殊的含义, 所以要把 new ... 放到普通 clj code 里面
 #?(:cljs
-   (defn init-editor! [node] 
-     (let [editor (new EditorJS (clj->js {:holder node
-                                          :onChange (fn [api event]
-                                                      (debounced-save api))
-                                          :tools {:header {:class Header
-                                                           :config {:classNames {1 "text-4xl font-bold my-4",
-                                                                                 2 "text-3xl font-semibold my-3",
-                                                                                 3 "text-2xl font-medium my-2"}}}
-                                                  :checklist {:class Checklist
-                                                              :inlineToolbar true}
-                                                  :quote {:class Quote
+   (defn init-editor! [node]
+     (let [maybe-data (js/localStorage.getItem "editor-content")
+           initial-data (when maybe-data (js/JSON.parse maybe-data))
+           editor (new EditorJS (clj->js (merge
+                                          {:holder node
+                                           :onChange (fn [api event]
+                                                       (debounced-save api))
+                                           :tools {:header {:class Header
+                                                            :config {:classNames {1 "text-4xl font-bold my-4"
+                                                                                  2 "text-3xl font-semibold my-3"
+                                                                                  3 "text-2xl font-medium my-2"}}}
+                                                   :checklist {:class Checklist
+                                                               :inlineToolbar true}
+                                                   :quote {:class Quote
+                                                           :inlineToolbar true}
+                                                   :list {:class EditorjsList
                                                           :inlineToolbar true}
-                                                  :list {:class EditorjsList
-                                                         :inlineToolbar true}
-                                                  :raw RawTool}}))]
+                                                   :raw RawTool}}
+                                          (when initial-data {:data initial-data}))))]
        (println "editor" editor))))
 
 (e/defn NotionHome []
