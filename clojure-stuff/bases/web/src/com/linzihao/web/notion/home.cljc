@@ -78,11 +78,20 @@
        (ResizeHandle 200 400 !width)))))
 
 #?(:cljs
-   (defn debounced-save [api]
-     (let [save-data (.save (.-saver api))]
-       (.then save-data
-              (fn [d]
-                (println "saved" d))))))
+   (do
+     (defonce debounce-timeout (atom nil))
+     (defn debounced-save [api]
+       (when @debounce-timeout
+         (js/clearTimeout @debounce-timeout))
+       (reset! debounce-timeout
+               (js/setTimeout
+                (fn []
+                  (let [save-data (.save (.-saver api))]
+                    (.then save-data
+                           (fn [d]
+                             (js/localStorage.setItem "editor-content" (js/JSON.stringify d))
+                             (println "saved and stored to localStorage" d)))))
+                500)))))
 
 ;; 在 electric 里面, constructor 好像有特殊的含义, 所以要把 new ... 放到普通 clj code 里面
 #?(:cljs
