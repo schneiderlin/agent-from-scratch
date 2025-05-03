@@ -3,5 +3,7 @@
 @plugin "@tailwindcss/typography" {
     className: editor
 }
-@source "../../../../../node_modules/@editorjs/header/dist/*.mjs";
-@config "./tailwind.config.js";
+
+/* plugin 的 class 是外部指定的, 里面没有写死的 tailwind class 了 */
+/* @source "../../../../../node_modules/@editorjs/header/dist/*.mjs"; */
+/* @config "./tailwind.config.js"; */

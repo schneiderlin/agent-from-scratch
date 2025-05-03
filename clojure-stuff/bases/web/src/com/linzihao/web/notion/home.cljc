@@ -77,23 +77,15 @@
         (TreeLabel Document "Page 4" MockChildren))
        (ResizeHandle 200 400 !width)))))
 
-#?(:cljs (set! (.-EditorJS js/window) EditorJS))
-#?(:cljs (set! (.-opts js/window) (clj->js {:tools {:header Header
-                                                    :checklist {:class Checklist
-                                                                :inlineToolbar true}
-                                                    :quote {:class Quote
-                                                            :inlineToolbar true}
-                                                    :list {:class EditorjsList
-                                                           :inlineToolbar true}
-                                                    :raw RawTool}})))
-;; #?(:cljs (set! (.-EditorJS js/window) "what the fuck"))
-
 ;; 在 electric 里面, constructor 好像有特殊的含义, 所以要把 new ... 放到普通 clj code 里面
 #?(:cljs
    (defn init-editor! [node]
      (println "init editor")
      (let [editor (new EditorJS (clj->js {:holder node
-                                          :tools {:header Header
+                                          :tools {:header {:class Header
+                                                           :config {:classNames {1 "text-4xl font-bold my-4",
+                                                                                 2 "text-3xl font-semibold my-3",
+                                                                                 3 "text-2xl font-medium my-2"}}}
                                                   :checklist {:class Checklist
                                                               :inlineToolbar true}
                                                   :quote {:class Quote
