@@ -3,4 +3,5 @@
 @plugin "@tailwindcss/typography" {
     className: editor
 }
-/* @config "./tailwind.config.js"; */
+@source "../../../../../node_modules/@editorjs/header/dist/*.mjs";
+@config "./tailwind.config.js";

@@ -2,7 +2,7 @@
   (:require [hyperfiddle.electric3 :as e]
             [hyperfiddle.electric-dom3 :as dom]
             [missionary.core :as m]
-            [com.linzihao.xiangqi.ui.render :refer [Chessboard]]
+            #_[com.linzihao.xiangqi.ui.render :refer [Chessboard]]
             [com.linzihao.web.notion.home :refer [NotionHome]]))
 
 #?(:clj (defonce a (atom 1)))
@@ -24,5 +24,5 @@
      (let [path js/window.location.pathname]
        (case path
          "/notion" (NotionHome)
-         "/xiangqi" (Chessboard)
+       #_#_  "/xiangqi" (Chessboard)
          (Test))))))
