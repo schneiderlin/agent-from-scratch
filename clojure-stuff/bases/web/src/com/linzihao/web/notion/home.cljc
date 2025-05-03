@@ -9,7 +9,15 @@
    [hyperfiddle.electric3 :as e]
    [hyperfiddle.electric-dom3 :as dom]
    #?(:cljs ["@editorjs/editorjs" :as EditorJS])
-  ;;  #?(:cljs ["@editorjs/editorjs" :refer [default] :rename {default EditorJS}])
+   #?(:cljs ["@editorjs/header" :as Header])
+   #?(:cljs ["@editorjs/checklist" :as Checklist])
+
+   #?(:cljs ["@editorjs/quote" :as Quote])
+   #?(:cljs ["@editorjs/list" :as EditorjsList])
+   #?(:cljs ["@editorjs/image" :as ImageTool])
+   #?(:cljs ["@editorjs/raw" :as RawTool])
+  ;;  #?(:cljs ["@editorjs/checklist" :as Checklist])
+  ;;  #?(:cljs ["@editorjs/checklist" :as Checklist])
    ))
 
 (e/defn CloseSidebarButton [hover? !hide-sidebar?]
@@ -70,12 +78,29 @@
        (ResizeHandle 200 400 !width)))))
 
 #?(:cljs (set! (.-EditorJS js/window) EditorJS))
+#?(:cljs (set! (.-opts js/window) (clj->js {:tools {:header Header
+                                                    :checklist {:class Checklist
+                                                                :inlineToolbar true}
+                                                    :quote {:class Quote
+                                                            :inlineToolbar true}
+                                                    :list {:class EditorjsList
+                                                           :inlineToolbar true}
+                                                    :raw RawTool}})))
 ;; #?(:cljs (set! (.-EditorJS js/window) "what the fuck"))
 
 ;; 在 electric 里面, constructor 好像有特殊的含义, 所以要把 new ... 放到普通 clj code 里面
 #?(:cljs
    (defn init-editor! [node]
-     (let [editor (new EditorJS (clj->js {:holder node}))]
+     (println "init editor")
+     (let [editor (new EditorJS (clj->js {:holder node
+                                          :tools {:header Header
+                                                  :checklist {:class Checklist
+                                                              :inlineToolbar true}
+                                                  :quote {:class Quote
+                                                          :inlineToolbar true}
+                                                  :list {:class EditorjsList
+                                                         :inlineToolbar true}
+                                                  :raw RawTool}}))]
        (println "editor" editor))))
 
 (e/defn NotionHome []
@@ -84,8 +109,8 @@
    (Sidebar)
    (let [parent dom/node
          node (dom/div
-               (dom/props {:id "editorjs"})
-               (dom/text "Notion Home")
+               (dom/props {:id "editorjs"
+                           :class "w-full h-full"}) 
                dom/node)]
      #?(:cljs (set! (.-parent js/window) parent))
      (when (dom/Await-element parent "#editorjs")

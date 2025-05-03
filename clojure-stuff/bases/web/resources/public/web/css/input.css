@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+@plugin "@tailwindcss/typography" {
+    className: editor
+}
+/* @config "./tailwind.config.js"; */
