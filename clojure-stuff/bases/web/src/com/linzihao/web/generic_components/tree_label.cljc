@@ -43,21 +43,17 @@
    (e/fn [_])))
 
 (e/defn MockChildren []
-  (dom/ul
-   (TreeLabel Document "SubPage 1" RichChildren)
-   (TreeLabel Document "SubPage 1" RichChildren)
-   (TreeLabel Document "SubPage 1" RichChildren)
-   (TreeLabel Document "SubPage 1" RichChildren)
-   (TreeLabel Document "SubPage 1" RichChildren)
-   (TreeLabel Document "SubPage 2" RichChildren)
-   (TreeLabel Document "A really long subpage title longgggggggg" RichChildren)))
+  (let [ids (e/diff-by identity (range 10))]
+    (dom/ul
+     (e/for [id ids]
+       (TreeLabel Document (str "SubPage " id) MockChildren)))))
 
 (e/defn TreeLabel [Svg label Children]
   (let [!expand? (atom false) expand? (e/watch !expand?)
         !page-options? (atom false) page-options? (e/watch !page-options?)]
     (RichLabel
      ;; left
-     (e/fn [hover?] 
+     (e/fn [hover?]
        (IconButton [] {}
                    #(swap! !expand? not) 
                    (e/fn []
