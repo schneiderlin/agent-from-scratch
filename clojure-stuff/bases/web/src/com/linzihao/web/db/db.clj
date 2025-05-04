@@ -26,18 +26,12 @@
          {:id id :type type :data data})))))
 
 (comment 
-  (d/q '[:find ?data
-         :in $ ?pid
-         :where
-         [?e :block/id ?pid]
-         [?e :block/type "page"]
-         [?e :block/data ?data]]
-       (d/db conn) "home")
   (get-blocks-in-page conn "home")
   :rcf)
 
 (def schema {:block/id {:db/cardinality :db.cardinality/one
-                        :db/valueType :db.type/string}
+                        :db/valueType :db.type/string
+                        :db/unique :db.unique/identity}
              :block/type {:db/cardinality :db.cardinality/one
                           :db/valueType :db.type/string}
              :block/data {:db/cardinality :db.cardinality/one 
@@ -54,7 +48,7 @@
   (analyzer "你好世界哈哈哈") 
   :rcf)
 
-(def conn (d/get-conn "./tmp/mydb6" schema
+(def conn (d/get-conn "./tmp/mydb7" schema
                       {:search-opts {:query-analyzer analyzer
                                      :analyzer analyzer}}))
 
@@ -64,6 +58,11 @@
   (d/transact! conn [entity]))
 
 (comment 
+  (upsert! conn 
+           {:block/id "XaHGLadjhT"
+            :block/type "paragraph"
+            :block/data {:text "dhcdhdkwajsdh World"}})
+
   (d/transact! conn
                [{:block/id "XaHGLadjhT"
                  :block/type "paragraph"
