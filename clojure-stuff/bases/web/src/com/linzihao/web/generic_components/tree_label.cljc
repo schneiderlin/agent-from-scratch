@@ -24,9 +24,12 @@
        (IconButton [] {}
                    #(swap! !expand? not)
                    (e/fn []
-                     (if hover?
-                       (Chevron (if expand? 0 -90))
-                       (Svg)))))
+                     (dom/div
+                      (dom/props {:class (if hover? "" "hidden")})
+                      (Chevron (if expand? 0 -90)))
+                     (dom/div
+                      (dom/props {:class (if hover? "hidden" "")})
+                      (Svg)))))
      ;; label
      label
      ;; right
