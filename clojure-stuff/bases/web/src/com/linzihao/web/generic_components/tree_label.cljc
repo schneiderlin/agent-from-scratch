@@ -9,20 +9,57 @@
 
 (e/declare TreeLabel)
 
+(e/defn StaticChildren []
+  (dom/div
+   (dom/props {:class "ml-2"})
+   (dom/text "child")))
+
+(e/defn RichChildren []
+  (RichLabel
+   ;; left
+   (e/fn [hover?]
+     (IconButton [] {}
+                 #()
+                 Document))
+   ;; label
+   "label"
+   ;; right
+   (e/fn [hover?]
+     (dom/div
+      (dom/props {:class [(if hover? "opacity-100" "opacity-0")]})
+      (IconButton []
+                  {:tabIndex -1
+                   :aria-label "Delete, duplicate, and more…"}
+                  #()
+                  (e/fn []
+                    (dom/div
+                     (dom/props {:class "relative"})
+                     (Ellipsis))))
+      (IconButton []
+                  {:tabIndex 0
+                   :aria-label "Add a page inside"}
+                  (e/fn [])
+                  Plus)))
+   (e/fn [_])))
+
 (e/defn MockChildren []
   (dom/ul
-   (TreeLabel Document "SubPage 1" MockChildren)
-   (TreeLabel Document "SubPage 2" MockChildren)
-   (TreeLabel Document "A really long subpage title longgggggggg" MockChildren)))
+   (TreeLabel Document "SubPage 1" RichChildren)
+   (TreeLabel Document "SubPage 1" RichChildren)
+   (TreeLabel Document "SubPage 1" RichChildren)
+   (TreeLabel Document "SubPage 1" RichChildren)
+   (TreeLabel Document "SubPage 1" RichChildren)
+   (TreeLabel Document "SubPage 2" RichChildren)
+   (TreeLabel Document "A really long subpage title longgggggggg" RichChildren)))
 
 (e/defn TreeLabel [Svg label Children]
   (let [!expand? (atom false) expand? (e/watch !expand?)
         !page-options? (atom false) page-options? (e/watch !page-options?)]
     (RichLabel
      ;; left
-     (e/fn [hover?]
+     (e/fn [hover?] 
        (IconButton [] {}
-                   #(swap! !expand? not)
+                   #(swap! !expand? not) 
                    (e/fn []
                      (dom/div
                       (dom/props {:class (if hover? "" "hidden")})
@@ -50,10 +87,9 @@
                     {:tabIndex 0
                      :aria-label "Add a page inside"}
                     (e/fn [])
-                    Plus)))
-     ;; sibling
-     (e/fn [_]
-       (when expand?
+                    Plus))) 
+     (e/fn [_] 
+       (when expand? 
          (dom/div
           (dom/props {:class "ml-2"})
           (Children)))))))

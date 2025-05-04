@@ -15,6 +15,14 @@
    (dom/On "click" on-click nil)
    (Svg)))
 
+(comment
+  (time
+   (concat ["select-none transition-opacity duration-200 ease"
+            "inline-flex items-center justify-center flex-shrink-0 rounded-md p-0 relative fill-[rgba(55,53,47,0.45)] w-[20px] h-[20px]"
+            "hover:bg-gray-200"]
+           []))
+  :rcf)
+
 (e/defn Icon [extra-classes props Svg]
   (dom/div
    (dom/props (merge {:role "button"
