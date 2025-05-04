@@ -1,8 +1,7 @@
 (ns com.linzihao.web.db.db
-  (:require [datalevin.core :as d]
-            [datalevin.analyzer :as analyzer]
-            [datalevin.search-utils :as search-utils]
-            ))
+  (:require 
+   [datalevin.core :as d]
+   [datalevin.search-utils :as search-utils]))
 
 (defn get-blocks-in-page
   "Given a page-id, return a vector of blocks inside it, each as {:id id :type type :data data}."
@@ -34,8 +33,7 @@
                         :db/valueType :db.type/string}
              :block/type {:db/cardinality :db.cardinality/one
                           :db/valueType :db.type/string}
-             :block/data {:db/cardinality :db.cardinality/one
-                          #_#_:db/valueType :db.type/any
+             :block/data {:db/cardinality :db.cardinality/one 
                           :db.fulltext/autoDomain true
                           :db/fulltext true}})
 
