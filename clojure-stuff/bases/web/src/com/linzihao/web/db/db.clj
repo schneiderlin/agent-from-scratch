@@ -6,14 +6,14 @@
 (defn get-blocks-in-page
   "Given a page-id, return a vector of blocks inside it, each as {:id id :type type :data data}."
   [conn page-id]
-  (let [block-ids (d/q '[:find ?blocks .
-                         :in $ ?pid
-                         :where
-                         [?e :block/id ?pid]
-                         [?e :block/type "page"]
-                         [?e :block/data ?data]
-                         [(get ?data :blocks) ?blocks]]
-                       (d/db conn) page-id)]
+  (let [data (d/q '[:find ?data .
+                    :in $ ?pid
+                    :where
+                    [?e :block/id ?pid]
+                    [?e :block/type "page"]
+                    [?e :block/data ?data]]
+                  (d/db conn) page-id)
+        block-ids (:blocks data)]
     (vec
      (for [bid block-ids]
        (let [[id type data] (first (d/q '[:find ?bid ?type ?data
@@ -25,8 +25,15 @@
                                         (d/db conn) bid))]
          {:id id :type type :data data})))))
 
-(comment
-  (get-blocks-in-page conn "some page")
+(comment 
+  (d/q '[:find ?data
+         :in $ ?pid
+         :where
+         [?e :block/id ?pid]
+         [?e :block/type "page"]
+         [?e :block/data ?data]]
+       (d/db conn) "home")
+  (get-blocks-in-page conn "home")
   :rcf)
 
 (def schema {:block/id {:db/cardinality :db.cardinality/one
@@ -51,6 +58,11 @@
                       {:search-opts {:query-analyzer analyzer
                                      :analyzer analyzer}}))
 
+(defn upsert!
+  "Insert or update a block/page entity. Takes conn and a map with :block/id, :block/type, :block/data."
+  [conn entity]
+  (d/transact! conn [entity]))
+
 (comment 
   (d/transact! conn
                [{:block/id "XaHGLadjhT"
@@ -68,6 +80,14 @@
                  :block/type "page"
                  :block/data {:blocks ["XaHGLadjhT"
                                        "BY4lWQ--Wo"]}}])
+
+  ;; 全部的 page
+  (d/q '[:find ?id ?data
+         :where
+         [?e :block/id ?id]
+         [?e :block/type "page"]
+         [?e :block/data ?data]]
+       (d/db conn))
 
   ;; 全部的 block
   (d/q '[:find ?id ?type ?data
@@ -92,9 +112,6 @@
          [?e :block/data ?data]
          [(fulltext $ ?q) [[?e _ _]]]]
        (d/db conn) 
-       "中文")
-  
-  (d/fulltext-datoms (d/db conn) "文内容是怎么分词的")
-  (d/fulltext-datoms (d/db conn) "ck")
+       "going")
 
   :rcf)
