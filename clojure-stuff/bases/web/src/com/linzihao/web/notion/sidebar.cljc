@@ -49,7 +49,12 @@
     (LabelButton Home "Home")
     (LabelButton Inbox "Inbox"))))
 
-(e/defn Sidebar []
+(e/defn Foo [page-id !page-id]
+  (dom/div
+   (TreeLabel Document page-id MockChildren)
+   (dom/On "click" (fn [] (reset! !page-id page-id)) nil)))
+
+(e/defn Sidebar [!page-id]
   (let [!width (atom 200) width (e/watch !width)
         !hide? (atom false) hide? (e/watch !hide?)]
     (if hide?
@@ -61,8 +66,8 @@
        (SidebarTop !hide?)
        (Tools)
        (dom/ul
-        (TreeLabel Document "Page 1" MockChildren)
-        (TreeLabel Document "Page 2" MockChildren)
-        (TreeLabel Document "Page 3" MockChildren)
-        (TreeLabel Document "Page 4" MockChildren))
+        (Foo "home" !page-id)
+        (Foo "Page 2" !page-id)
+        (Foo "Page 3" !page-id)
+        (Foo "Page 4" !page-id))
        (ResizeHandle 200 400 !width)))))

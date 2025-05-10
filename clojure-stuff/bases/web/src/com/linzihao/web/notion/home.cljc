@@ -7,7 +7,8 @@
    ))
 
 (e/defn NotionHome []
-  (dom/div
-   (dom/props {:class "flex"})
-   (Sidebar)
-   (Page "home")))
+  (let [!page-id (atom "home") page-id (e/watch !page-id)]
+    (dom/div
+     (dom/props {:class "flex"})
+     (Sidebar !page-id)
+     (Page page-id))))

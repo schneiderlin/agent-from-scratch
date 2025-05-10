@@ -6,6 +6,7 @@
 (defn get-blocks-in-page
   "Given a page-id, return a vector of blocks inside it, each as {:id id :type type :data data}."
   [conn page-id]
+  (println "page-id" page-id)
   (let [data (d/q '[:find ?data .
                     :in $ ?pid
                     :where
@@ -27,6 +28,7 @@
 
 (comment 
   (get-blocks-in-page conn "home")
+  (get-blocks-in-page conn "Page 1")
   :rcf)
 
 (def schema {:block/id {:db/cardinality :db.cardinality/one
@@ -57,28 +59,23 @@
   [conn entity]
   (d/transact! conn [entity]))
 
+(defn page-upsert!
+  [conn page-id blocks]
+  (let [block-ids (map :block/id blocks)
+        page-entity {:block/id page-id 
+                     :block/type "page" 
+                     :block/data {:blocks (vec block-ids)}}]
+   #_(conj blocks page-entity)
+    (d/transact! conn (conj blocks page-entity))))
+
 (comment 
+  (let [blocks [{:block/id "I5EoiCZbFZ", :block/type "paragraph", :block/data {:text "what the fuck"}}]]
+    (page-upsert! conn "home" blocks))
+
   (upsert! conn 
            {:block/id "XaHGLadjhT"
             :block/type "paragraph"
             :block/data {:text "dhcdhdkwajsdh World"}})
-
-  (d/transact! conn
-               [{:block/id "XaHGLadjhT"
-                 :block/type "paragraph"
-                 :block/data {:text "dhcdhdkwajsdh World"}}
-                {:block/id "BY4lWQ--Wo"
-                 :block/type "header"
-                 :block/data {:text "what the heck"
-                              :level 2}}
-                {:block/id "1"
-                 :block/type "header"
-                 :block/data {:text "中文内容是怎么分词的? 测试一下"
-                              :level 2}}
-                {:block/id "some page"
-                 :block/type "page"
-                 :block/data {:blocks ["XaHGLadjhT"
-                                       "BY4lWQ--Wo"]}}])
 
   ;; 全部的 page
   (d/q '[:find ?id ?data
