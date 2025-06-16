@@ -2,7 +2,7 @@
   (:require [hyperfiddle.electric3 :as e]
             [hyperfiddle.electric-dom3 :as dom]
             [com.linzihao.web.mvp.mvp :refer [Menu]] 
-            #_[com.linzihao.xiangqi.ui.render :refer [Chessboard]]
+            [com.linzihao.xiangqi.ui.render :refer [Chessboard]]
             [com.linzihao.web.notion.home :refer [NotionHome]]))
 
 (e/defn Main [ring-request]
@@ -12,5 +12,5 @@
      (let [path js/window.location.pathname]
        (case path
          "/notion" (NotionHome)
-       #_#_  "/xiangqi" (Chessboard)
+         "/xiangqi" (Chessboard)
          (Menu))))))

@@ -4,7 +4,7 @@
    [hyperfiddle.electric3 :as e]
    [hyperfiddle.electric-dom3 :as dom]
    #?(:clj [com.linzihao.xiangqi.config :refer [engine-path]])
-   #?(:clj [com.linzihao.xiangqi.interface :as logic])
+   [com.linzihao.xiangqi.interface :as logic]
    #?(:clj [com.linzihao.xiangqi.engine.interface :as ei])
    #?(:clj [com.linzihao.xiangqi.fen :as fen])))
 
@@ -12,22 +12,19 @@
 
 (defonce !selected-pos (atom nil))
 #?(:clj (def !debug-pos (atom nil)))
-#?(:clj (defonce !state (atom logic/state)))
+(defonce !state (atom logic/state))
+;; TODO 用 e/on-unmount 管理 engine lifecycle
 ;; wsl
 #?(:clj (defonce engine (ei/start-engine engine-path)))
-;; 公司
-;; 用 e/on-unmount 管理 engine lifecycle
-;; #?(:clj (defonce engine (ei/start-engine "/home/zihao/workspace/private/agent-from-scratch/data/pikafish/pikafish-avx2")))
 #?(:clj (defonce !bestmove (atom nil)))
 ;; #?(:clj (defonce bestmove-flow (m/watch !bestmove)))
 #?(:clj (defonce bestmove-flow (ei/engine->bestmove-flow engine)))
-
 
 (comment 
   (reset! !bestmove "h2e2")
   (def bestmove-flow (m/watch !bestmove))
   (def bestmove-flow (ei/engine->bestmove-flow engine))
-  (def engine (ei/start-engine "/home/linzihao/Desktop/workspace/private/agent-from-scratch/data/pikafish/pikafish-avx2"))
+  (def engine (ei/start-engine engine-path))
 
   engine
   (ei/send-command engine "go depth 10")
@@ -77,7 +74,7 @@
 
 (e/defn Chessboard []
   (e/client
-   (let [state (e/server (e/watch !state))
+   (let [state (e/watch !state)
          board (e/server (e/watch (atom (:board state))))
          bestmove (e/server (fen/move-str->coords (e/input bestmove-flow)))
          selected-pos (e/watch !selected-pos)
@@ -119,8 +116,7 @@
                    (e/for [[_token _event] (dom/On-all "click")]
                      (when (and selected-pos
                                 (= (subs (name (get-in board selected-pos)) 0 1) next-player))
-                       (e/server
-                        (swap! !state #(logic/move % selected-pos [row col])))
+                       (swap! !state #(logic/move % selected-pos [row col]))
                        (reset! !selected-pos nil))))))
 
       ;; Highlight bestmove-coords (red highlight)
@@ -148,3 +144,9 @@
           (dom/div
            (dom/props {:class "absolute w-24 h-24 bg-blue-500/20 rounded-full"
                        :style {:transform (str "translate(" left "px, " top "px)")}}))))))))
+
+(comment
+  !selected-pos
+  (swap! !state #(logic/move % @!selected-pos [5 6]))
+  :rcf)
+
